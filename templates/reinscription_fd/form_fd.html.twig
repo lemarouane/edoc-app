@@ -1,0 +1,472 @@
+{% extends "template.html.twig" %}
+
+{% block title %}{{ 'demande_reinscription'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css">
+    <style type="text/css">
+        /* Table Styling */
+        #reinscriptionTable td {
+            padding: 8px !important;
+            background-color: inherit !important;
+        }
+        #reinscriptionTable td:last-child {
+            display: table-cell !important;
+            text-align: center !important;
+            width: 120px !important;
+        }
+        #reinscriptionTable tr td:last-child:empty {
+            background-color: inherit !important;
+        }
+        #reinscriptionTable tr.even td:last-child,
+        #reinscriptionTable tr.odd td:last-child {
+            background-color: inherit !important;
+        }
+        #reinscriptionTable td, #reinscriptionTable th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .badge.bg-submitted {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge.bg-generated {
+            background-color: #198754;
+            color: white;
+        }
+        #reinscriptionTable td a {
+            font-size: 0.9rem;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            text-decoration: none;
+        }
+        #reinscriptionTable td:last-child {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form Styling */
+        .form-container {
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* Enhanced Section Title Styling */
+        .section-title {
+            background-color: #f8f9fa;
+            color: #007bff;
+            padding: 10px 15px;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced Checkbox Styling */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.5rem;
+        }
+        .checkbox-group label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #333;
+            user-select: none;
+            transition: color 0.2s;
+        }
+        .checkbox-group label:hover {
+            color: #007bff;
+        }
+        .checkbox-group input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        .checkbox-group .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid #ced4da;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .checkbox-group input[type="checkbox"]:checked ~ .checkmark {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .checkbox-group .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+        .checkbox-group input[type="checkbox"]:checked ~ .checkmark:after {
+            display: block;
+        }
+        .checkbox-group .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .conditional-field {
+            display: none;
+            margin-top: 10px;
+            padding-left: 30px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        /* Formation Rows Styling */
+        .formation-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .formation-row input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        .btn-add, .btn-remove {
+            padding: 0.25rem 0.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        .btn-remove {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-remove:hover {
+            background-color: #c82333;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Title -->
+    <h6 class="mb-0 text-uppercase">{{ 'demande_reinscription'|trans }} (FD)</h6>
+    <hr/>
+
+    {% include "flaches.html.twig" %}
+
+    <!-- Student Message Based on Latest Reinscription -->
+    {% if reinscriptions is defined and reinscriptions|length > 0 %}
+        {% set latestReinscription = reinscriptions|first %}
+        {% if latestReinscription.status == 'Submitted' %}
+            <div class="alert alert-info">
+                <strong>{{ 'votre_derniere_demande_est_en_cours'|trans }}</strong>
+            </div>
+        {% elseif latestReinscription.status == 'PDF Generated' %}
+            <div class="alert alert-success">
+                <strong>{{ 'votre_derniere_demande_a_ete_validee'|trans }}</strong>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Flash Messages -->
+    {% for label, messages in app.flashes %}
+        {% if label starts with 'info_student_' %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'success' %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'danger' or label == 'error' %}
+            {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- Form -->
+    <div class="form-container mb-4">
+        <form method="post" action="{{ path('reinscription_fd') }}">
+            <div class="row g-3">
+                <!-- Page 2: Rapport d'Avancement de Thèse -->
+                <div class="col-12">
+                    <h6 class="section-title">{{ 'rapport_avancement_these'|trans }}</h6>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="discipline">{{ 'discipline'|trans }}</label>
+                        <input type="text" id="discipline" name="discipline" placeholder="{{ 'entrez_discipline'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="specialite">{{ 'specialite'|trans }}</label>
+                        <input type="text" id="specialite" name="specialite" placeholder="{{ 'entrez_specialite'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="intitule_these">{{ 'intitule_these'|trans }}</label>
+                        <input type="text" id="intitule_these" name="intitule_these" placeholder="{{ 'entrez_intitule_these'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="introduction">{{ 'introduction'|trans }}</label>
+                        <textarea id="introduction" name="introduction" placeholder="{{ 'entrez_introduction'|trans }}"></textarea>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="problematique">{{ 'problematique'|trans }}</label>
+                        <textarea id="problematique" name="problematique" placeholder="{{ 'entrez_problematique'|trans }}"></textarea>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="methodologie">{{ 'methodologie_utilisee'|trans }}</label>
+                        <textarea id="methodologie" name="methodologie" placeholder="{{ 'entrez_methodologie'|trans }}"></textarea>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="resultats">{{ 'resultats_obtenus_interpretation'|trans }}</label>
+                        <textarea id="resultats" name="resultats" placeholder="{{ 'entrez_resultats'|trans }}"></textarea>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="conclusion">{{ 'conclusion'|trans }}</label>
+                        <textarea id="conclusion" name="conclusion" placeholder="{{ 'entrez_conclusion'|trans }}"></textarea>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="travaux_en_attente">{{ 'travaux_en_attente'|trans }}</label>
+                        <textarea id="travaux_en_attente" name="travaux_en_attente" placeholder="{{ 'entrez_travaux_en_attente'|trans }}"></textarea>
+                    </div>
+                </div>
+
+                <!-- Page 3: Financement de la thèse -->
+                <div class="col-12">
+                    <h6 class="section-title">{{ 'financement_these'|trans }}</h6>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="bourse_merite" id="bourse_merite">
+                                <span class="checkmark"></span>
+                                {{ 'bourse_merite'|trans }}
+                            </label>
+                        </div>
+                        <div class="conditional-field" id="bourse_merite_depuis_field">
+                            <label for="bourse_merite_depuis">{{ 'depuis'|trans }}</label>
+                            <input type="date" id="bourse_merite_depuis" name="bourse_merite_depuis">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="bourse_troisieme_cycle" id="bourse_troisieme_cycle">
+                                <span class="checkmark"></span>
+                                {{ 'bourse_troisieme_cycle'|trans }}
+                            </label>
+                        </div>
+                        <div class="conditional-field" id="bourse_troisieme_cycle_depuis_field">
+                            <label for="bourse_troisieme_cycle_depuis">{{ 'depuis'|trans }}</label>
+                            <input type="date" id="bourse_troisieme_cycle_depuis" name="bourse_troisieme_cycle_depuis">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="bourse_cotutelle" id="bourse_cotutelle">
+                                <span class="checkmark"></span>
+                                {{ 'bourse_cotutelle'|trans }}
+                            </label>
+                        </div>
+                        <div class="conditional-field" id="bourse_cotutelle_dates_field">
+                            <label for="bourse_cotutelle_date_debut">{{ 'date_debut'|trans }}</label>
+                            <input type="date" id="bourse_cotutelle_date_debut" name="bourse_cotutelle_date_debut">
+                            <label for="bourse_cotutelle_date_fin">{{ 'date_fin'|trans }}</label>
+                            <input type="date" id="bourse_cotutelle_date_fin" name="bourse_cotutelle_date_fin">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="bourse_echange">{{ 'bourse_echange'|trans }}</label>
+                        <input type="text" id="bourse_echange" name="bourse_echange" placeholder="{{ 'precisez_bourse_echange'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="bourse_projet_recherche">{{ 'bourse_projet_recherche'|trans }}</label>
+                        <input type="text" id="bourse_projet_recherche" name="bourse_projet_recherche" placeholder="{{ 'precisez_projet_recherche'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="salarie_fonction">{{ 'salarie_fonction'|trans }}</label>
+                        <input type="text" id="salarie_fonction" name="salarie_fonction" placeholder="{{ 'entrez_fonction'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="salarie_organisme">{{ 'salarie_organisme_employeur'|trans }}</label>
+                        <input type="text" id="salarie_organisme" name="salarie_organisme" placeholder="{{ 'entrez_organisme_employeur'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="fonctionnaire_fonction">{{ 'fonctionnaire_fonction'|trans }}</label>
+                        <input type="text" id="fonctionnaire_fonction" name="fonctionnaire_fonction" placeholder="{{ 'entrez_fonction'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="fonctionnaire_organisme">{{ 'fonctionnaire_organisme_employeur'|trans }}</label>
+                        <input type="text" id="fonctionnaire_organisme" name="fonctionnaire_organisme" placeholder="{{ 'entrez_organisme_employeur'|trans }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="cotutelle" id="cotutelle">
+                                <span class="checkmark"></span>
+                                {{ 'cotutelle_oui'|trans }}
+                            </label>
+                        </div>
+                        <div class="conditional-field" id="cotutelle_fields">
+                            <div class="form-group">
+                                <label for="cotutelle_universite">{{ 'universite_organisme_recherche'|trans }}</label>
+                                <input type="text" id="cotutelle_universite" name="cotutelle_universite" placeholder="{{ 'entrez_universite_organisme'|trans }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cotutelle_nom_prenom">{{ 'nom_prenom_co_directeur'|trans }}</label>
+                                <input type="text" id="cotutelle_nom_prenom" name="cotutelle_nom_prenom" placeholder="{{ 'entrez_nom_prenom'|trans }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cotutelle_telephone">{{ 'telephone'|trans }}</label>
+                                <input type="text" id="cotutelle_telephone" name="cotutelle_telephone" placeholder="{{ 'entrez_telephone'|trans }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cotutelle_email">{{ 'email'|trans }}</label>
+                                <input type="email" id="cotutelle_email" name="cotutelle_email" placeholder="{{ 'entrez_email'|trans }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page 4: Formations Complémentaires -->
+                <div class="col-12">
+                    <h6 class="section-title">{{ 'formations_complementaires'|trans }}</h6>
+                </div>
+                <div class="col-12">
+                    <div id="formations_complementaires">
+                        <div class="formation-row">
+                            <input type="date" name="formations[0][date]" placeholder="Date">
+                            <input type="text" name="formations[0][duree]" placeholder="Durée (heures)">
+                            <input type="text" name="formations[0][intitule]" placeholder="Intitulé">
+                            <input type="text" name="formations[0][organisateur]" placeholder="Organisateur">
+                            <input type="text" name="formations[0][equivalence_heures]" placeholder="Equivalence en heures">
+                            <button type="button" class="btn-remove" onclick="removeFormationRow(this)">{{ 'Supprimer' }}</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add mt-2" onclick="addFormationRow()">{{ 'ajouter_formation'|trans }}</button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">{{ 'soumettre'|trans }}</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('reinscription_fd') }}
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'template.html.twig' %}
+{% block title %}{{'emp_temps'|trans}}{% endblock %}
+{% block body %}
+
+            <!--end breadcrumb-->
+<h6 class="mb-0 text-uppercase">{{'emp_temps'|trans}}</h6>
+<hr/>
+        
+              <div class="row">
+                 <div class="col-lg-12 mx-auto">
+                 {% include "flaches.html.twig" %}
+                  <div class="card">
+                   
+                    <div class="card-body">
+                       <div class="row g-3">
+                         <div class="col-12 col-lg-2">
+                            <div class="card shadow-none bg-light border">
+                              <div class="card-body row g-2">
+                                  <div class="col-12">
+                                    <label class="form-label">{{'groupe'|trans}}</label>
+                                    <select class="form-control form-select" id="groupe" name="emploi[groupe]" >
+                                        
+                                        {% for groupe in groupes %}
+                                            <option value="{{groupe.codeE}}">{{groupe.nom}}</option>
+                                        {% endfor %}
+                                    </select>
+                                  </div>
+                                  <div class="col-12">
+                                        <label class="form-label">{{'semaine'|trans}}</label>
+                                        <input type="text" value="{{weck}}" class="form-control" id="semaine" placeholder="Color" name="emploi[semaine]">
+                                  </div>
+                                  <div class="col-12 align-self-center">
+                                    <button style="border: 0;background: none;box-shadow: none;border-radius: 0px;float:left"  class="emploiimage col-4" value="minus">  <img alt="" src="uploads/img/fleche_gauche.png" class="rounded float-start" style="border:none;vertical-align:middle;" height="18"></button>
+                                    <button style="border: 0;background: none;box-shadow: none;border-radius: 0px;"  class="emploiimage col-4 text-center" value="act">{{'actuel'|trans}}</button>
+                                    <button style="border: 0;background: none;box-shadow: none;border-radius: 0px;float:right"  class="emploiimage col-4" value="add">  <img alt="" src="uploads/img/fleche_droite.png" class="rounded float-end" style="border:none;vertical-align:middle;" height="18"></button>    
+                                  </div>
+                                  <div class="col-12">
+                                    <label class="form-label">{{'annee'|trans}}</label>
+                                    <input type="text" value="{{annee}}" class="form-control" id="annee" placeholder="Size" name="emploi[annee]">
+                                  </div>
+                                  
+                                  <div class="d-grid">
+                                    <hr>
+                                    <button  class="btn btn-block btn-primary radius-30 emploiimage" value="valider" >{{'valider'|trans}}</button>
+
+                                  </div> 
+                              </div>
+                              
+                            </div>
+                         </div>
+                         <div class="col-12 col-lg-10">
+                            <div class="card shadow-none bg-light border">
+                              <div class="card-body row g-2">
+
+                                <div class="table-responsive">
+                                    <div class="h-100 d-flex align-items-center  div_imagetranscrits" >
+                                        <img src="uploads/img/planning.png" id="image">
+                                    </div>
+                                </div>
+                              </div>
+                              
+                            </div>
+                         </div>
+                       </div><!--end row-->
+
+                     </div>
+                    </div>
+                 </div>
+              </div><!--end row-->
+    
+    {% endblock %}  
+    {% block javascripts %}
+        {{parent()}}
+        {{ encore_entry_script_tags('emploi') }}
+
+    {% endblock %}

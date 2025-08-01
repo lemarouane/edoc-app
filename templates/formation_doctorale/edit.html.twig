@@ -1,0 +1,51 @@
+{% extends "template.html.twig" %}
+
+{% block title %}{{ 'edit_formation_doctorale'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h6 class="mb-0 text-uppercase">{{ 'edit_formation_doctorale'|trans }}</h6>
+    <hr/>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="mb-4">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.module, {'attr': {'class': 'form-select'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.vol_horaire, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.intitule_formation, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.organisme_formation, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">{{ 'save'|trans }}</button>
+            <a href="{{ path('formation_doctorale') }}" class="btn btn-secondary mt-3">{{ 'cancel'|trans }}</a>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

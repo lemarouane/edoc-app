@@ -1,0 +1,159 @@
+        <aside class="sidebar-wrapper" data-simplebar="true">
+          <div class="sidebar-header">
+            <div>
+              <img src="{{asset('build/images/logo-icon.png')}}" class="logo-icon" alt="logo icon" >
+            </div>
+            <div>
+              <h4 class="logo-text">E-DOC ENSAT</h4>
+            </div>
+            <div class="toggle-icon ms-auto"><i class="bi bi-chevron-double-left"></i>
+            </div>
+          </div>
+          <!--navigation-->
+          <ul class="metismenu" id="menu">
+            
+
+{% if app.user.type == 'FI' %}
+            <li>
+              <a href="{{path('app_dashboard')}}" class="">
+                <div class="parent-icon"><i class="lni lni-dashboard"></i>
+                </div>
+                <div class="menu-title">{{'dashboard'|trans}}</div>
+              </a>
+  
+            </li>
+    <li>
+        <a href="{{ path('app_document') }}" class="">
+            <div class="parent-icon"><i class="lni lni-files"></i></div>
+            <div class="menu-title">{{ 'documents'|trans }}</div>
+        </a>
+    </li>
+    <li>
+        <a href="javascript:;" class="has-arrow">
+            <div class="parent-icon"><i class="bi bi-pencil-square"></i></div>
+            <div class="menu-title">{{ 'note_resultats'|trans }}</div>
+        </a>
+        <ul>
+            <li><a href="{{ path('app_resultat_annee') }}"><i class="bi bi-arrow-right-short"></i>{{ 'affichage'|trans }}</a></li>
+            <li><a href="{{ path('app_resultat') }}"><i class="bi bi-arrow-right-short"></i>{{ 'historique'|trans }}</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="{{ path('orientation') }}" class="">
+            <div class="parent-icon"><i class="bi bi-arrow-up-right-square"></i></div>
+            <div class="menu-title">{{ 'orientation'|trans }}</div>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('conventionDemande') }}" class="">
+            <div class="parent-icon"><i class="bi bi-table"></i></div>
+            <div class="menu-title">{{ 'stages'|trans }}</div>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('emploisearch') }}" class="">
+            <div class="parent-icon"><i class="lni lni-support"></i></div>
+            <div class="menu-title">{{ 'emp_temps'|trans }}</div>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('cvtheque_new') }}" class="">
+            <div class="parent-icon"><i class="bi bi-person-lines-fill"></i></div>
+            <div class="menu-title">{{ 'cvtheque'|trans }}</div>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('app_etudiant_upload_rapport') }}" class="">
+            <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="menu-title">{{ 'Rapport PFE'|trans }}</div>
+        </a>
+    </li>
+
+    
+    <li>
+        <a href="https://events-ensat.uae.ac.ma/" target="_blank" class="">
+            <div class="parent-icon"><i class="bi bi-calendar-week"></i></div>
+            <div class="menu-title">{{ 'ENSAT Events'|trans }}</div>
+        </a>
+    </li>
+
+            {% if is_student_eligible_for_convention() %}
+                <li>
+                    <a href="{{ path('convention_submission') }}" class="">
+                        <div class="parent-icon"><i class="lni lni-files"></i></div>
+                        <div class="menu-title">{{ 'ConventionsDD'|trans }}</div>
+                    </a>
+                </li>
+            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+{% elseif app.user.type == 'FD' %}
+    <li>
+        <a href="{{ path('app_dashboard') }}" class="">
+            <div class="parent-icon"><i class="lni lni-dashboard"></i></div>
+            <div class="menu-title">{{ 'dashboard'|trans }}</div>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('attestation_list') }}" class="">
+            <div class="parent-icon"><i class="lni lni-certificate"></i></div>  
+            <div class="menu-title">{{ 'Attestation d\'inscription'|trans }}</div>
+        </a>
+    </li>
+    <li>
+ 
+            <a href="javascript:;" class="has-arrow">
+            <div class="parent-icon"><i class="lni lni-graduation"></i></div>
+            <div class="menu-title">{{ 'Formation Doctorale'|trans }}</div>
+        </a>
+        <ul>
+            <li><a href="{{ path('formation_doctorale') }}"><i class="lni lni-certificate"></i>{{ 'Attestation de Formation'|trans }}</a></li>
+            <li><a href="{{ path('my_stage_fd') }}"><i class="lni lni-certificate"></i>{{ 'Stage'|trans }}</a></li>
+
+         </ul>
+    </li>
+<li>
+    <a href="{{ path('reinscription_fd') }}" class="">
+        <div class="parent-icon"><i class="lni lni-pencil-alt"></i></div>  
+        <div class="menu-title">{{ 'Réinscription'|trans }}</div>
+    </a>
+</li>
+
+    
+{% endif %}
+
+<!--
+            <li>
+              <a href="{{path('app_exam_etudiants')}}" class="">
+                <div class="parent-icon"><i class="bi bi-calendar"></i>
+                </div>
+                <div class="menu-title">{{'plan_exam'|trans}}</div>
+              </a>
+  
+            </li>
+            <li>
+              <a href="{{path('reinscription')}}" class="">
+                <div class="parent-icon"><i class="bi bi-recycle"></i>
+                </div>
+                <div class="menu-title">{{'reinsc'|trans}}</div>
+              </a>
+  
+            </li>
+
+-->
+
+          </ul>
+          <!--end navigation-->
+       </aside>

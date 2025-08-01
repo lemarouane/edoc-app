@@ -1,0 +1,525 @@
+{% extends "template.html.twig" %}
+{% block title %}{{'document'|trans}}{% endblock %}
+{% block stylesheets %}
+{{ parent() }}
+
+<style type="text/css">
+#ui-datepicker-div{
+  background-color: orange;
+}
+.ui-datepicker-calendar{
+  color :white;
+  border :1px solid gray;
+}
+
+</style>
+
+{% endblock %}
+{% block body %}
+
+      
+      <!--breadcrumb-->
+				
+				<!--end breadcrumb-->
+        {% include "flaches.html.twig" %}
+        {{ form_start(form, { 'action': path('app_demandeDoc') , attr: {novalidate: 'novalidate'}}) }}
+				<div class="row">
+					<div class="col-xl-12 mx-auto">
+            <h6 class="mb-0 text-uppercase">{{'demandes'|trans}}</h6>
+						<hr/>
+						<div class="card">
+							<div class="card-body">
+								  <div class="row">
+                  <div class="col-md-12">
+                    <div class="box box-primary">
+                      <div class="box-header with-border">
+                        <h3 class="box-title"></h3>
+                        <div class="box-body">
+                          <div class="form-group">
+                            
+                              <div class="row row-cols-1 row-cols-lg-2" style="margin-top: 15px;">
+                                <div class="form-check">
+                                  <label for="attestation" class="form-label">{{'att_scolarite'|trans}}</label>
+                                  <div>
+                                    <div id="attestation"  class="form-control">
+                                      <input type="checkbox" id="attestation" class="check-space" name="document[attestation]"  value="attestation">
+                                      <label for="attestation" >{{'att_scolarite'|trans}}</label>      
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="form-check">
+                                  <label for="carte" class="form-label">{{'carte_etudiant'|trans}}</label>
+                                  <div>
+                                    <div id="carte"  class="form-control">
+                                      <input type="checkbox" id="originaleC" class="check-space" name="document[carte]"  value="Originale">
+                                      <label for="originaleC" >{{'originale'|trans}}</label>      
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row row-cols-1 row-cols-lg-2" style="margin-top: 15px;">
+                                <div class="form-check">
+                                  <label for="releve" class="form-label">{{'releve_note'|trans}}</label>
+                                  {% if ins_etape_AT is not empty  %}
+                                    <div>
+                                      <div id="releve"  class="form-control">
+                                        {% for ins  in ins_etape %}
+                                          <input type="checkbox" id="releve_{{ins.COD_ETP}}" class="check-space" name="releve[{{ins.COD_ETP}}]"  value="{{ins.COD_ETP}}_{{ins.COD_ANU}}">
+                                          <label for="releve_{{ins.COD_ETP}}" >{{ins.COD_ETP}}</label>
+                                        {% endfor %}       
+                                      </div>
+                                    </div>
+                                  {% else %}
+                                      <div class="form-control" style="color: red; font-size: 16px;">{{'msg_doc1'|trans}} </div>
+                                  {% endif %}
+                                </div>
+                                <div class="form-check">
+                                  <label for="attestationR" class="form-label"> {{'att_reussite'|trans}}</label>
+                                  {% if ins_etape_AT is not empty  %}
+                                    <div>
+                                      <div id="attestationR"  class="form-control">
+                                        {% for ins1  in ins_etape_AT %}
+                                          <input type="checkbox" id="attestationR_{{ins1.COD_ETP}}" class="check-space" name="attestationR[{{ins1.COD_ETP}}]"  value="{{ins1.COD_ETP}}_{{ins1.COD_ANU}}">
+                                          <label for="attestationR_{{ins1.COD_ETP}}" >{{ins1.COD_ETP}}</label>
+                                        {% endfor %}       
+                                      </div>
+                                    </div>
+                                  {% else %}
+                                      <div class="form-control" style="color: red; font-size: 16px;"> {{'msg_doc2'|trans}}  </div>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              <div class="row row-cols-1 row-cols-lg-2" style="margin-top: 15px;">
+                                <div class="form-check">
+                                  <label for="bac" class="form-label"> {{'autre_doc'|trans}}</label>
+                                  <div>
+                                    <div id="bac"  class="form-control" style="height: 80px;">
+                                      <ul>
+                                        <li>
+                                            <a href="{{path('telechargerDoc', { 'type': 'B' })}}">{{'bac'|trans}}</a>
+                                        </li>
+                                        <li>
+                                          <a href="{{path('telechargerDoc', { 'type': 'D' })}}">{{'deug'|trans}}</a>
+                                        </li>
+                                        <li>
+                                          <a href="{{path('telechargerDoc', { 'type': 'L' })}}">{{'license'|trans}}</a>
+                                        </li>
+                                      </ul> 
+                                      
+                                            
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {% if ((ins_dip is not empty ) and (diplomes is empty)) %}
+                                <div class="col-sm-12 col-md-6">
+                                  <label for="diplome" class="control-label">{{'diplome'|trans}}</label>
+                                  <div>
+                                    <div id="diplome"  class="form-control">
+                                      <input type="checkbox" id="originale" class="check-space" name="document[diplome]"  value="Originale"> 
+                                      <label for="originale" >{{'originale'|trans}} </label>
+                                            
+                                    </div>
+                                  </div>
+                                </div>
+                                {% endif %}
+                              </div>
+                              <div>
+                                <hr>
+                                <button type="submit" class="btn btn-primary px-4">{{'valider'|trans}}</button>
+                              </div> 
+                              
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+							</div>
+						</div>
+            <h6 class="mb-0 text-uppercase">{{'suivi'|trans}}</h6>
+						<hr/>
+						<div class="card">
+							<div class="card-body">
+								<ul class="nav nav-pills nav-pills-success mb-3" role="tablist">
+									<li class="nav-item" role="presentation">
+										<a class="nav-link active" data-bs-toggle="pill" href="#danger-pills-home" role="tab" aria-selected="true">
+											<div class="d-flex align-items-center">
+												<div class="tab-icon"><i class='bi bi-file-ruled font-18 me-1'></i>
+												</div>
+												<div class="tab-title">{{'releve'|trans}} / {{'att_reussite'|trans}}</div>
+											</div>
+										</a>
+									</li>
+									<li class="nav-item" role="presentation">
+										<a class="nav-link" data-bs-toggle="pill" href="#danger-pills-profile" role="tab" aria-selected="false">
+											<div class="d-flex align-items-center">
+												<div class="tab-icon"><i class='bi bi-person-vcard-fill font-18 me-1'></i>
+												</div>
+												<div class="tab-title">{{'diplome'|trans}} / {{'carte_etudiant'|trans}}</div>
+											</div>
+										</a>
+									</li>
+									<li class="nav-item" role="presentation">
+										<a class="nav-link" data-bs-toggle="pill" href="#danger-pills-contact" role="tab" aria-selected="false">
+											<div class="d-flex align-items-center">
+												<div class="tab-icon"><i class='bi bi-file-earmark-text font-18 me-1'></i>
+												</div>
+												<div class="tab-title">{{'attestation_sco'|trans}}</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+								<div class="tab-content" id="danger-pills-tabContent">
+									<div class="tab-pane fade show active" id="danger-pills-home" role="tabpanel">
+										{% if releves is not empty %} 
+                    <div class="table-responsive">
+                      <table id="example" class="table table-striped table-bordered" >
+                        <thead>
+                          <tr>
+                            <th>{{'date_demande'|trans}}</th>
+                            <th>{{'type'|trans}}</th>  
+                            <th>{{'etape'|trans}}</th>
+                            <th>{{'date_validation'|trans}}</th>  
+                            <th>{{'etat'|trans}}</th>
+                            <th>{{'motif_refus'|trans}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for releve in releves %} 
+                            <tr>
+                              <td class="sorting_1">{{releve.dateDemande ? releve.dateDemande|date('d-m-Y H:i:s') : '' }}</td>
+                              <td>
+		{% if releve.type =="Relevé" %} 
+{{'rel_note'|trans}}
+    {% endif  %} 
+                       
+
+{% if releve.type =="Attestation" %} 
+{{'att_reu'|trans}}
+    {% endif  %}   
+
+                              </td>
+                              <td>{{releve.codeEtape}}</td>
+                              <td>{{releve.dateValidation ? releve.dateValidation|date('d/m/Y') : '' }}</td>
+                              <td>{{releve.decision}}</td>
+                              <td>{{releve.motif}}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      
+                      </table>
+                    </div>
+                    {% else %}
+                      <div class="alert alert-success">
+                          <strong>{{'MOD_EMPTY_DEM'|trans}}</strong>  
+                      </div>
+                    {% endif %}
+									</div>
+									<div class="tab-pane fade" id="danger-pills-profile" role="tabpanel">
+								{% if diplomes is not empty or cartes is not empty %} 
+                    <div class="table-responsive">
+                      <table id="example4" class="table table-striped table-bordered" >
+                        <thead>
+                          <tr>
+                            <th>{{'date_demande'|trans}}</th>
+                            <th>{{'type'|trans}}</th>  
+                            <th>{{'valeur'|trans}}</th>
+                            <th>{{'date_validation'|trans}}</th>  
+                            <th>{{'etat'|trans}}</th>
+                            <th>{{'motif_refus'|trans}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+	              	{% if diplomes is not empty %} 
+
+                          {% for diplome in diplomes %}
+                            <tr>
+                              <td class="sorting_1">{{diplome.dateDemande ? diplome.dateDemande|date('d-m-Y H:i:s') : '' }}</td>
+                              <td>{{diplome.type}}</td>
+                              <td>{{diplome.valueType}}</td>
+                              <td>{{diplome.dateValidation ? diplome.dateValidation|date('d/m/Y') : '' }}</td>
+                              <td>{{diplome.decision}}</td>
+                              <td>{{diplome.motif}}</td>
+                            </tr>
+                          {% endfor %}
+
+                  {% endif %}
+
+                 {% if cartes is not empty %} 
+                          {% for carte in cartes %}
+                            <tr>
+                              <td class="sorting_1">{{carte.dateDemande ? carte.dateDemande|date('d-m-Y H:i:s') : '' }}</td>
+                              <td>{{carte.type}}</td>
+                              <td>{{carte.valueType}}</td>
+                              <td>{{carte.dateValidation ? carte.dateValidation|date('d/m/Y') : '' }}</td>
+                              <td>{{carte.decision}}</td>
+                              <td>{{carte.motif}}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                   {% endif %}
+                      </table>
+                    </div>
+                    {% else %}
+                      <div class="alert alert-success">
+                          <strong>{{'MOD_EMPTY_DEM'|trans}}</strong> 
+                      </div>
+                    {% endif %}
+									</div>
+									<div class="tab-pane fade" id="danger-pills-contact" role="tabpanel">
+										{% if attestations is not empty %} 
+                    <div class="table-responsive">
+                      <table id="example3" class="table table-striped table-bordered" >
+                        <thead>
+                          <tr>
+                            <th>{{'date_demande'|trans}}</th>
+                            <th>{{'date_validation'|trans}}</th>  
+                            <th>{{'etat'|trans}}</th>
+                            <th>{{'motif_refus'|trans}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for atest in attestations %}
+                            <tr>
+                              <td class="sorting_1">{{atest.dateDemande ? atest.dateDemande|date('d-m-Y H:i:s') : '' }}</td>
+                              <td>{{atest.dateValidation ? atest.dateValidation|date('d-m-Y H:i:s') : '' }}</td>
+                              <td>{{atest.decision}}</td>
+                              <td>{{atest.motif}}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      
+                      </table>
+                    </div>
+                    {% else %}
+                      <div class="alert alert-success">
+                          <strong>{{'MOD_EMPTY_DEM'|trans}} </strong> 
+                      </div>
+                    {% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+          </div>
+        </div>
+<!-- Modal -->
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">{{'fiche_suivi'|trans}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            
+                 <div class="col-lg-12 mx-auto">
+                  <div class="card">
+                    <div class="card-body">
+                       <div class="row g-3">
+                         <div class="col-12 col-lg-6">
+                            <div class="card shadow-none bg-light border">
+                              <div class="card-body row g-3">
+                                
+                                  <div class="col-12 col-lg-6">
+                                    {{ form_row(form.emailPerso ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                  </div>
+                                  <div class="col-12 col-lg-6">
+                                    {{ form_row(form.emailPro ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                  </div>
+                                  <div class="col-12 col-lg-6">
+                                    {{ form_row(form.mobile ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                  </div>
+                                  <div class="col-12 col-lg-6">
+                                    {{ form_row(form.domicile ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                  </div>
+                                  
+                                  <div class="col-12 col-lg-6">
+                                    {{ form_row(form.linkedin ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                  </div>
+                                  <div class="col-12 col-lg-6">
+                                    {{ form_row(form.situation ,{ 'attr' : { 'class' : 'form-select' }}) }}
+                                  </div>
+                                  <div class="col-12">
+                                    {{ form_row(form.delai ,{ 'attr' : { 'class' : 'form-select' }}) }}
+                                  </div>
+                                  <div class="col-12">
+                                    {{ form_row(form.adressePostale ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                  </div>
+                              </div>
+                            </div>
+                         </div>
+
+                         <div class="col-12 col-lg-6 rech">
+                            <div class="card shadow-none bg-light border">
+                              <div class="card-body">
+                                  <div class="row g-3">
+                                    <div class="col-12 col-lg-6 affiche">
+                                      {{ form_row(form.disciplineDoc ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12  col-lg-6 affiche">
+                                     {{ form_row(form.cedDoc ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 affiche">
+                                      {{ form_row(form.specialiteDoc ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 affiche">
+                                      {{ form_row(form.universiteDoc ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                     
+                                    </div>
+                                    
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.dateDebut ) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                     {{ form_row(form.dateFin ) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.paysVille ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.organisme ,{ 'attr' : { 'class' : 'form-control ' }}) }} 
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.poste ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.departement ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12 laureats_autreSituation_label">
+                                      {{ form_row(form.autreSituation ,{ 'attr' : { 'class' : 'form-control' }}) }}
+                                     
+                                    </div>
+                                    
+                                    <div class="col-12 poste">
+                                      <label class="form-label"><u>{{'contact_rh'|trans}} </u></label>
+                                      <hr>
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.rhContact ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                    </div>
+                                    <div class="col-12 col-lg-6 poste">
+                                      {{ form_row(form.rhPhone ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                     
+                                    </div>
+                                    <div class="col-12 poste">
+                                      {{ form_row(form.rhEmail ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                     
+                                    </div>
+                                    
+                                  </div><!--end row-->
+                              </div>
+                            </div>  
+                        </div>
+                        <p>{{'q1'|trans}}
+                        <div class="col-12 col-lg-12 rech">
+                            <div class="card shadow-none bg-light border">
+                              <div class="card-body" id="engagement_list" data-prototype="{{ form_widget(form.experiences.vars.prototype)|e('html_attr')}}">
+                                {% for row in form.experiences %}
+                                    <div class="form-group panel">
+                                      <div class="row panalEngagement" style="margin-bottom: 15px;">
+                                        
+                                          {{ form_row(row.dateDebut ) }}
+                                        
+                                          {{ form_row(row.dateFin ) }}
+                                       
+                                          {{ form_row(row.paysVille ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                        
+                                          {{ form_row(row.organisme ,{ 'attr' : { 'class' : 'form-control ' }}) }} 
+                                        
+                                          {{ form_row(row.poste ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                        
+                                          {{ form_row(row.departement ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                        
+                                          {{ form_row(row.rhContact ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                        
+                                          {{ form_row(row.rhPhone ,{ 'attr' : { 'class' : 'form-control ' }}) }} 
+                                        
+                                          {{ form_row(row.rhEmail ,{ 'attr' : { 'class' : 'form-control ' }}) }}
+                                        
+                                      </div>
+                                    </div>
+                                  {% endfor %}<!--end row-->
+                              </div>
+                            </div>  
+                        </div>
+
+                        
+                       </div><!--end row-->
+                     </div>
+                    </div>
+                 </div>
+              </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="modalClose" data-dismiss="modal" style="float:left">{{'fermer'|trans}}</button>
+        <button type="submit" class="btn btn-primary">{{'save'|trans}} </button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+{{ form_row(form._token) }}
+{{ form_end(form , {'render_rest': false}) }}
+
+<div id="modalCarteForm"  class="modal fade col-lg-12 col-md-12 col-sm-12 col-xs-12" tabindex="-1" aria-hidden="true">  
+  <div class=" modal-dialog modal-lg col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+    <div class="modal-content col-lg-12 col-md-12 col-sm-12 col-xs-12" >  
+      <div class="modal-header">  
+        <h4 class="modal-title">{{'uploader_photo'|trans}}</h4>  
+      </div>
+      <form method="post" id="ordre_form">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-12 mx-auto">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row g-3">                   
+                    <div class="col-12">
+                      <div class="card shadow-none bg-light border">
+                        <div class="card-body">
+                          <div class="profile-avatar text-center image-upload" style='.image-upload>input {display: none;}'>
+                            <label for="profile_image_file">
+                              <img id='file' style='cursor: pointer' src="{{ asset( app.user.image.getwebpath)}}" class="rounded-circle shadow" width="120" height="120" alt="">
+                            </label><br>
+                            <input type="file" id="profile_image_file" name="fileemploi" style="visibility: hidden;" accept="image/*" onchange="document.getElementById('file').src = window.URL.createObjectURL(this.files[0])">
+                          </div>
+                          <div class="form-group" id="path-to-upload-image" data-href="{{ path('edit_image')}}">                                
+                            <div class="text-center mt-4">
+                              <h4 class="mb-1"> </h4>
+                              <p class="mb-0 text-secondary">{{'uploader_photo'|trans}} </p>             
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div><!--end row-->                    
+                  </div>
+                </div>
+              </div>               
+            </div>
+          </div>
+        </div>  
+        <div class="modal-footer">  
+          <button type="button" id="modalCloseCarte" class="btn btn-danger"  data-bs-dismiss="modal">{{'fermer'|trans}}</button> 
+          <input type="submit" class="btn btn-primary" value="Envoyer"></button> 
+        </div>
+      </form>
+    </div>  
+  </div>  
+</div>
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('tableaffichage') }}
+    
+    {{ encore_entry_script_tags('laureat') }}
+    {{ encore_entry_script_tags('experience') }}
+      
+
+{% endblock %}

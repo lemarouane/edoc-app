@@ -1,0 +1,155 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/783.8ed13f3d.js",
+        "build/287.676afddf.js",
+        "build/306.0323b47b.js",
+        "build/721.17380425.js",
+        "build/app.000d1b97.js"
+      ],
+      "css": [
+        "build/app.c58301bc.css"
+      ]
+    },
+    "langues": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/langues.749c5dab.js"
+      ]
+    },
+    "datatable_trans": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/datatable_trans.813367e4.js"
+      ]
+    },
+    "tableaffichage": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/tableaffichage.a862f3f2.js"
+      ]
+    },
+    "orientation": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/orientation.2da60f30.js"
+      ],
+      "css": [
+        "build/orientation.75115fca.css"
+      ]
+    },
+    "orientationJs": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/306.0323b47b.js",
+        "build/orientationJs.7288952e.js"
+      ]
+    },
+    "bootstraprtl": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/bootstraprtl.0d06b74f.js"
+      ],
+      "css": [
+        "build/bootstraprtl.1e70c2a8.css"
+      ]
+    },
+    "stylertl": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/stylertl.0523000b.js"
+      ],
+      "css": [
+        "build/stylertl.08b0af3a.css"
+      ]
+    },
+    "stage": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/stage.13d262c1.js"
+      ]
+    },
+    "emploi": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/emploi.fec38886.js"
+      ]
+    },
+    "laureat": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/287.676afddf.js",
+        "build/laureat.37f1be53.js"
+      ]
+    },
+    "experience": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/287.676afddf.js",
+        "build/306.0323b47b.js",
+        "build/experience.ce08806b.js"
+      ]
+    },
+    "examen": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/examen.8bfc1810.js"
+      ]
+    },
+    "formation_doctorale": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/783.8ed13f3d.js",
+        "build/formation_doctorale.f78261c1.js"
+      ]
+    },
+    "stages": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/783.8ed13f3d.js",
+        "build/287.676afddf.js",
+        "build/237.389a0415.js",
+        "build/stages.bac02c6c.js"
+      ]
+    },
+    "reinscription_fd": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/52.06ef2db2.js",
+        "build/783.8ed13f3d.js",
+        "build/287.676afddf.js",
+        "build/237.389a0415.js",
+        "build/reinscription_fd.442d3345.js"
+      ]
+    },
+    "conventions": {
+      "js": [
+        "build/runtime.5297126c.js",
+        "build/755.1af907cb.js",
+        "build/783.8ed13f3d.js",
+        "build/237.389a0415.js",
+        "build/conventions.0b9d058d.js"
+      ]
+    }
+  }
+}

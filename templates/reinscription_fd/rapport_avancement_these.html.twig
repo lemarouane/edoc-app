@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport d'Avancement de Thèse - Université Abdelmalek Essaadi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            color: navy;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .info-section {
+            margin: 20px 0;
+        }
+
+        .info-line {
+            display: flex;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        .dotted-line {
+            flex: 1;
+            height: 1.2em;
+            margin: 0 5px;
+            font-weight: bold;
+            text-align: justify;
+        }
+
+        .year-work {
+            color: navy;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .section {
+            margin: 15px 0;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .content-area {
+            width: 100%;
+            min-height: 100px;
+            border: none;
+            margin: 10px 0;
+        }
+
+        .future-work {
+            color: navy;
+            font-weight: bold;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1 class="title">RAPPORT D'AVANCEMENT DE THESE</h1>
+    <p class="subtitle">(Dactylographié maximum deux pages)</p>
+</div>
+
+<div class="info-section">
+    <div class="info-line">
+        <span class="info-label">Discipline :</span>
+        <span class="dotted-line">{{ details.discipline ?? '--' }}</span>
+    </div>
+    <div class="info-line">
+        <span class="info-label">Spécialité :</span>
+        <span class="dotted-line">{{ details.specialite ?? '--' }}</span>
+    </div>
+    <div class="info-line">
+        <span class="info-label">Intitulé de la thèse:</span>
+        <span class="dotted-line">{{ details.intituleThese ?? '--' }}</span>
+    </div>
+</div>
+
+<div class="year-work">
+    <!-- Year can be dynamic if needed -->
+</div>
+
+<div class="section">
+    <div class="section-title">1) Introduction</div>
+    <div class="content-area">{{ details.introduction ?? '--' }}</div>
+</div>
+
+<div class="section">
+    <div class="section-title">2) Problématique</div>
+    <div class="content-area">{{ details.problematique ?? '--' }}</div>
+</div>
+
+<div class="section">
+    <div class="section-title">3) Méthodologie utilisée</div>
+    <div class="content-area">{{ details.methodologie ?? '--' }}</div>
+</div>
+
+<div class="section">
+    <div class="section-title">4) Résultats obtenus et interprétation</div>
+    <div class="content-area">{{ details.resultats ?? '--' }}</div>
+</div>
+
+<div class="section">
+    <div class="section-title">5) Conclusion</div>
+    <div class="content-area">{{ details.conclusion ?? '--' }}</div>
+</div>
+
+<div class="future-work">
+    Travaux en attente de réalisations pour l'année
+</div>
+<div class="content-area">{{ details.travauxEnAttente ?? '--' }}</div>
+</body>
+</html>

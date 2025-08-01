@@ -1,0 +1,107 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}{{ 'Modifier un Rapport PFE'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .form-container {
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .form-control.is-invalid { border-color: #dc3545; }
+        .invalid-feedback { display: block; color: #dc3545; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h6 class="mb-0 text-uppercase">{{ 'Modifier un Rapport PFE'|trans }}</h6>
+    <hr/>
+
+    {% for label, messages in app.flashes %}
+        {% if label == 'success' %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'error' or label == 'danger' %}
+            {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'info' %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'warning' %}
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="form-container">
+        {{ form_start(form, {'attr': {'action': path('app_etudiant_rapport_edit', {'id': rapport.id}), 'method': 'POST', 'enctype': 'multipart/form-data'}}) }}
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="form-group">
+                    {{ form_label(form.pdfFile) }}
+                    {{ form_widget(form.pdfFile) }}
+                    {{ form_errors(form.pdfFile) }}
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">{{ 'Modifier'|trans }}</button>
+                <a href="{{ path('app_etudiant_upload_rapport') }}" class="btn btn-secondary">{{ 'Annuler'|trans }}</a>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

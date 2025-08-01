@@ -1,0 +1,356 @@
+{% extends "template.html.twig" %}
+
+{% block title %}{{ 'Demande de Convention'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <style>
+        .form-container {
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group select:focus, .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+        .section-title {
+            background-color: #f8f9fa;
+            color: #007bff;
+            padding: 10px 15px;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        #submissionsTable td { padding: 8px !important; background-color: inherit !important; }
+        #submissionsTable td:last-child { display: table-cell !important; text-align: center !important; width: 120px !important; }
+        #submissionsTable tr td:last-child:empty { background-color: inherit !important; }
+        #submissionsTable tr.even td:last-child, #submissionsTable tr.odd td:last-child { background-color: inherit !important; }
+        .form-control.is-invalid, .form-select.is-invalid { border-color: #dc3545; }
+        .invalid-feedback { display: block; color: #dc3545; }
+        #submissionsTable td, #submissionsTable th { text-align: center; vertical-align: middle; }
+        .badge.bg-pending { background-color: #ffc107; color: #212529; }
+        .badge.bg-admis { background-color: #198754; color: white; }
+        .badge.bg-non-preselectionne { background-color: #dc3545; color: white; }
+        .badge.bg-preselectionne { background-color: #0d6efd; color: white; }
+        #submissionsTable td a { font-size: 0.9rem; display: inline-flex; justify-content: center; align-items: center; padding: 0.5rem; text-decoration: none; }
+        #submissionsTable td:last-child { display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+        #dynamic-message-alert {
+            display: none;
+            margin-bottom: 1rem;
+        }
+        .alert-convention {
+            background-color: #e3f2fd;
+            border: 1px solid #2196f3;
+            color: #0d47a1;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.25rem;
+        }
+        .alert-dismissible .btn-close { padding: 0.75rem 1.25rem; }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+{% endblock %}
+
+{% block body %}
+    <h6 class="mb-0 text-uppercase">{{ 'Demande de Convention'|trans }}</h6>
+    <hr/>
+
+    {% include "flaches.html.twig" %}
+
+    {% for label, messages in app.flashes %}
+        {% if label == 'success' %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'error' or label == 'danger' %}
+            {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'info' %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <div id="dynamic-message-alert" class="alert alert-convention alert-dismissible fade show" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong id="dynamic-message-text"></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    {% if form is not null %}
+        <div class="form-container">
+            {{ form_start(form, {'attr': {'action': path('convention_submission_submit'), 'method': 'POST', 'enctype': 'multipart/form-data'}}) }}
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.conventionId) }}
+                        {{ form_widget(form.conventionId) }}
+                        {{ form_errors(form.conventionId) }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.zipFile) }}
+                        {{ form_widget(form.zipFile) }}
+                        {{ form_errors(form.zipFile) }}
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">{{ 'Soumettre'|trans }}</button>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    {% else %}
+        <p>{{ 'Aucune action disponible pour le moment.'|trans }}</p>
+    {% endif %}
+
+    {% if submissions is not empty %}
+        <h6 class="mb-0 text-uppercase">{{ 'Suivi des demandes de convention'|trans }}</h6>
+        <hr/>
+        <table id="submissionsTable" class="table table-striped table-bordered dataTable" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>{{ 'Convention'|trans }}</th>
+                    <th>{{ 'Date de soumission'|trans }}</th>
+                    <th>{{ 'Fichier ZIP'|trans }}</th>
+                    <th>{{ 'État'|trans }}</th>
+                    <th>{{ 'op'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                    <tr>
+                        <td>{{ submission.etablissement|default('N/A') }}</td>
+                        <td>{{ submission.date_submission|date('d/m/Y') }}</td>
+                        <td>
+                            {% if submission.zip_file %}
+                                <a href="{{ asset('Uploads/conventions/' ~ submission.zip_file) }}" class="text-primary" target="_blank" title="{{ 'Voir le fichier'|trans }}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if submission.etat == 'En cours' %}
+                                <span class="badge bg-pending">{{ submission.etat }}</span>
+                            {% elseif submission.etat == 'Présélectionné' %}
+                                <span class="badge bg-preselectionne">{{ submission.etat }}</span>
+                            {% elseif submission.etat == 'Admis' %}
+                                <span class="badge bg-admis">{{ submission.etat }}</span>
+                            {% elseif submission.etat starts with 'Non Présélectionné' %}
+                                <span class="badge bg-non-preselectionne">{{ submission.etat }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if submission.etat == 'En cours' %}
+                                <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ submission.id }}"
+                                   data-submission-id="{{ submission.id }}" title="{{ 'Supprimer'|trans }}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <div class="modal fade" id="deleteModal{{ submission.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ submission.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ submission.id }}">{{ 'Confirmer la suppression'|trans }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ 'Êtes-vous sûr de vouloir supprimer cette demande de convention ?'|trans }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Annuler'|trans }}</button>
+                                                <button type="button" class="btn btn-danger" onclick="deleteSubmission('{{ path('convention_submission_delete', {'id': submission.id}) }}', '{{ csrf_token('delete' ~ submission.id) }}')">{{ 'Supprimer'|trans }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <!-- Debug: Convention data -->
+    {% if conventions is defined %}
+        <script>
+            window.conventionData = {{ conventions|json_encode|raw }};
+            console.log('Convention data loaded:', window.conventionData);
+        </script>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DataTable
+            $('#submissionsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json'
+                },
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                lengthChange: true,
+                pageLength: 10,
+                responsive: true
+            });
+
+            // Convention message handler
+            console.log('DOM loaded, initializing convention message handler...');
+            const possibleSelectors = [
+                'select[name*="conventionId"]',
+                'select[id*="conventionId"]',
+                'select[id*="convention"]',
+                '#convention_submission_conventionId',
+                'form select:first-of-type'
+            ];
+            let conventionSelect = null;
+            for (let selector of possibleSelectors) {
+                conventionSelect = document.querySelector(selector);
+                if (conventionSelect) {
+                    console.log('Found convention select with selector:', selector);
+                    break;
+                }
+            }
+            if (!conventionSelect) {
+                console.error('Convention select not found! Available selects:', document.querySelectorAll('select'));
+                return;
+            }
+            const dynamicAlert = document.getElementById('dynamic-message-alert');
+            const dynamicMessage = document.getElementById('dynamic-message-text');
+            if (!dynamicAlert || !dynamicMessage) {
+                console.error('Dynamic message elements not found!');
+                return;
+            }
+            console.log('Elements found, setting up event listener...');
+            conventionSelect.addEventListener('change', function() {
+                const selectedConventionId = this.value;
+                console.log('Convention selected:', selectedConventionId);
+                if (selectedConventionId && selectedConventionId !== '') {
+                    if (window.conventionData) {
+                        const selectedConvention = window.conventionData.find(c => c.id == selectedConventionId);
+                        if (selectedConvention && selectedConvention.message && selectedConvention.message.trim() !== '') {
+                            console.log('Found message in stored data:', selectedConvention.message);
+                            dynamicMessage.textContent = selectedConvention.message;
+                            dynamicAlert.style.display = 'block';
+                            return;
+                        }
+                    }
+                    const ajaxUrl = '{{ path('convention_get_message', {'id': 'PLACEHOLDER'}) }}'.replace('PLACEHOLDER', selectedConventionId);
+                    console.log('Making AJAX call to:', ajaxUrl);
+                    fetch(ajaxUrl)
+                        .then(response => {
+                            console.log('AJAX response status:', response.status);
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('AJAX response data:', data);
+                            if (data.success && data.message && data.message.trim() !== '') {
+                                dynamicMessage.textContent = data.message;
+                                dynamicAlert.style.display = 'block';
+                            } else {
+                                console.log('No message found or empty message');
+                                dynamicAlert.style.display = 'none';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('AJAX Error:', error);
+                            dynamicAlert.style.display = 'none';
+                        });
+                } else {
+                    console.log('No convention selected, hiding message');
+                    dynamicAlert.style.display = 'none';
+                }
+            });
+
+            // Delete submission handler
+            window.deleteSubmission = function(url, csrfToken) {
+                console.log('Attempting to delete submission with URL:', url, 'and CSRF token:', csrfToken);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: '_token=' + encodeURIComponent(csrfToken)
+                })
+                .then(response => {
+                    console.log('Delete response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Delete response data:', data);
+                    if (data.success) {
+                        window.location.href = '{{ path('convention_submission') }}';
+                    } else {
+                        window.location.href = '{{ path('convention_submission') }}';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during deletion:', error);
+                    window.location.href = '{{ path('convention_submission') }}';
+                });
+            };
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "template.html.twig" %}
+
+{% block title %}{{ 'formation_doctorale'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style type="text/css">
+        /* Add these styles to your existing CSS */
+    #formationTable td {
+        padding: 8px !important; /* Ensures consistent padding */
+        background-color: inherit !important; /* Forces cell to inherit row color */
+    }
+    
+    #formationTable td:last-child {
+        display: table-cell !important; /* Override any flex display */
+        text-align: center !important;
+        width: 120px !important; /* Fixed width for actions column */
+    }
+    
+    /* Ensure empty action cells match row color */
+    #formationTable tr td:last-child:empty {
+        background-color: inherit !important;
+    }
+    
+    /* For striped tables, match the striped colors */
+    #formationTable tr.even td:last-child,
+    #formationTable tr.odd td:last-child {
+        background-color: inherit !important;
+    }
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+        }
+        #formationTable td, #formationTable th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .badge.bg-pending { background-color: #ffc107; color: #212529; }
+        .badge.bg-encadrant { background-color: #17a2b8; color: white; }
+        .badge.bg-dir-adj { background-color: #198754; color: white; }
+        #formationTable td a {
+            font-size: 0.9rem;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            text-decoration: none;
+        }
+        #formationTable td:last-child {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+ 
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Title -->
+    <h6 class="mb-0 text-uppercase">{{ 'formation_doctorale'|trans }}</h6>
+    <hr/>
+
+    {% include "flaches.html.twig" %}
+
+    <!-- Student Message Based on Latest Formation -->
+    {% if latestFormation %}
+        {% if latestFormation.status == 'En cours' %}
+            <div class="alert alert-info">
+                <strong>{{ 'Votre dernière demande est en cours de traitement.'|trans }}</strong>
+            </div>
+        {% elseif latestFormation.status == 'Validé par encadrant' %}
+            <div class="alert alert-info">
+                <strong>{{ 'Votre dernière formation a été validée par votre encadrant.'|trans }}</strong>
+            </div>
+        {% elseif latestFormation.status == 'Validé par directeur adjoint' %}
+            <div class="alert alert-success">
+                <strong>{{ 'Votre dernière formation a été validée par le directeur adjoint.'|trans }}</strong>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Flash Messages from Validation -->
+    {% for label, messages in app.flashes %}
+        {% if label == 'info_student_' ~ doctorant_id %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- Form (Always Visible) -->
+    <div class="mb-4">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.module, {'attr': {'class': 'form-select'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.vol_horaire, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.intitule_formation, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.organisme_formation, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.pieceJointe, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">{{ 'soumettre_formation'|trans }}</button>
+        {{ form_end(form) }}
+    </div>
+
+    <!-- Suivi des Formations -->
+    <h6 class="mb-0 text-uppercase">{{ 'suivi_formations'|trans }}</h6>
+    <hr/>
+
+    <!-- DataTable for Formation Doctorale -->
+<table id="formationTable" class="table table-striped table-bordered dataTable" style="width:100%;">
+    <thead>
+        <tr>
+            <th>{{ 'module'|trans }}</th>
+            <th>{{ 'intitule'|trans }}</th>
+            <th>{{ 'organisme'|trans }}</th>
+            <th>{{ 'volume_horaire'|trans }}</th>
+            <th>{{ 'date'|trans }}</th>
+            <th>{{ 'status'|trans }}</th>
+            <th>{{ 'piece_jointe'|trans }}</th>
+            <th>{{ 'actions'|trans }}</th> {# Always show actions column #}
+        </tr>
+    </thead>
+    <tbody>
+        {% if formations is defined and formations|length > 0 %}
+            {% for formation in formations %}
+                <tr>
+                    <td>{{ formation.moduleIntitule }}</td>
+                    <td>{{ formation.intituleFormation }}</td>
+                    <td>{{ formation.organismeFormation }}</td>
+                    <td>{{ formation.volHoraire }}</td>
+                    <td>{{ formation.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        {% if formation.status == 'En cours' %}
+                            <span class="badge bg-pending">{{ formation.status }}</span>
+                        {% elseif formation.status == 'Validé par encadrant' %}
+                            <span class="badge bg-encadrant">{{ formation.status }}</span>
+                        {% elseif formation.status == 'Validé par directeur adjoint' %}
+                            <span class="badge bg-dir-adj">{{ formation.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if formation.pieceJointe %}
+                            <a href="{{ path('formation_file', {'id': formation.id}) }}" class="text-primary" target="_blank" title="{{ 'voir_piece_jointe'|trans }}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if formation.status == 'En cours' %}
+                            <a href="{{ path('formation_edit', {'id': formation.id}) }}" class="text-warning" title="{{ 'modifier'|trans }}">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{{ path('formation_delete', {'id': formation.id}) }}" class="text-danger" 
+                               data-csrf="{{ csrf_token('delete' ~ formation.id) }}"
+                               onclick="if(confirm('{{ 'etes_vous_sur_de_vouloir_supprimer_cette_formation'|trans }}')) { 
+                                   deleteFormation(this); return false; 
+                               }" title="{{ 'supprimer'|trans }}">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('formation_doctorale') }}
+{% endblock %}

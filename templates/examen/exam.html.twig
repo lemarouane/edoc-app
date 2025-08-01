@@ -1,0 +1,33 @@
+{% extends 'template.html.twig' %}
+{% block title %}{{'plan_exam'|trans}}{% endblock %}
+{% block body %}
+<h6 class="mb-0 text-uppercase">{{'plan_exam'|trans}}</h6>
+<hr/>
+
+            {% include "flaches.html.twig" %}
+
+            <div class="card">
+                <div class="card-body">
+                    {% include "elements/info_etudiant.html.twig" %}<!--end row-->
+
+                  <div class="row">
+                      <div class="col-12">
+                         <div class="card border shadow-none radius-10">
+                           <div class="card-body planning">
+                               
+                           </div>
+                         </div>
+                      </div>
+
+                  </div><!--end row-->
+
+                </div>
+              </div>
+            
+                
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        
+        {{ encore_entry_script_tags('examen') }}
+    {% endblock %}

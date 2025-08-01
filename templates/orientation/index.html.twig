@@ -1,0 +1,90 @@
+{% extends 'template.html.twig' %}
+{% block title %}{{'orientation'|trans}}{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	{{ encore_entry_link_tags('orientation') }}
+{% endblock %}
+{% block body %}
+   <h6 class="mb-0 text-uppercase">{{'orientation'|trans}}</h6>
+<hr/>
+	<div id="main" role="main">
+		<div id="content">
+			{% if etat is not empty %}
+	    	<div class="Dashboard__Container-ijFFbQ iESidF">
+			    <div><!-- react-empty: 116 -->
+					<div class="Card-kDrUqF cSShtO">
+							
+					</div>
+				</div>
+			</div>
+			{% endif %}
+			<div class="row ">
+				<form name="document_stage" method="post" id="jsForm"  class="form-signin" action="#" novalidate> 
+					<div class=" cXGXpD" style="margin-top:20px;">
+						<div class="sc-bdVaJa eEUvjY">
+							<div class=" jhcIPJ">
+								<img src="{{ asset('uploads/img/attention.png') }}" height="64px" width="72px">
+								<p class=" ijzAWe" style="font-size:18px;"><!-- react-text: 47 -->{{'msg_orientation'|trans}} {{fermeture}} <!-- /react-text -->
+								</p>
+							</div>
+									                      		
+						</div>
+						<div class="Choice__Flex-eMAfGR dYSUpl">
+							<div class="Choice__List-fDRndS xYscu">
+								<ul id="sortable" name="orientation"> 
+									{% set ind = 0 %}
+									{% for filiere in filieres %}
+									{% set ind = ind + 1 %}
+		    							<li  id="{{filiere.codeEtab}}" class="Choice__ListItem-iJPvSH daFueF" style="box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 2px 0px; " >{{ ind }}- {{filiere.codeEtab}}</li>
+		    						{% endfor %}  
+									
+								</ul> 	
+							</div>
+							<iframe id="myFrame" class="Choice__Descriptif-PMuMG gSGekJ" title="descriptif" height="540" style="border: 1px solid gray;" src="uploads/pdf/scenario.pdf">
+							</iframe>
+						</div>
+						<button disabled="disabled" id="js-envoyer" class="Choice__Button-fatEfV csReYi activechoix">{{'envoyer'|trans}}</button>
+							
+					</div>
+                    <input type='hidden' id='ouvert' value='{{plateforme}}'/>
+				</form>
+
+			</div>
+		</div>
+	</div>
+	<form name="reclamation" method="post" id="jsForm2"  class="form-signin" action="#" novalidate>
+		<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header text-center" style="background-color: rgb(0, 151, 167);color: white;"> 
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						    <span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title w-100 font-weight-bold">{{'reclamation'|trans}}</h4>
+					</div>
+					<div class="modal-body mx-3">
+						<div class="md-form mb-5">
+						    <i class="fa fa-tag prefix grey-text"></i>
+						    <label data-error="wrong" data-success="right" for="form32">{{'sujet'|trans}}</label>
+						    <input type="text" id="form32" name="searchParam[sujet]" class="form-control validate">
+						</div>
+
+						<div class="md-form">
+						    <i class="fa fa-pencil prefix grey-text"></i>
+						    <label data-error="wrong" data-success="right" for="form8">{{'message'|trans}}</label>
+						    <textarea type="text" id="form8" name="searchParam[message]" class="md-textarea form-control" rows="4"></textarea> 
+						</div>
+
+					</div>
+					<div class="modal-footer d-flex justify-content-center">
+						<button class="btn btn-unique" style="background-color: red;color: white;">{{'envoyer'|trans}} </button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>    
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	{{ encore_entry_script_tags('orientationJs') }}
+{% endblock %}

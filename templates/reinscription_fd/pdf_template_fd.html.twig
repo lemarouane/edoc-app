@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Réinscription - Université Abdelmalek Essaadi</title>
+    <style>
+        /* Ensure consistent box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+        /* Container for each label-value pair */
+        .form-line {
+            display: flex;
+            align-items: center;
+            margin: 3px 0;
+            width: 100%;
+        }
+        /* Style for the label to ensure consistent width and prevent wrapping */
+        .label-fixed-width {
+            display: inline-block;
+            width: 250px; /* Restored original width */
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap; /* Prevent label from breaking into multiple lines */
+        }
+        /* Style for the value to ensure it stays on one line and is fully visible */
+        .value-align {
+            display: inline-block;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-weight: bold;
+            white-space: nowrap; /* Keep text on one line */
+            flex-grow: 0; /* Prevent the value from growing to fill space */
+        }
+        /* Specific styling for Structure d'accueil section to adjust spacing */
+        .structure-accueil-item {
+            display: flex;
+            align-items: center;
+            margin: 3px 0;
+            width: 100%;
+        }
+        .structure-accueil-label {
+            display: inline-block;
+            width: 250px; /* Restored original width */
+            text-align: left;
+            white-space: nowrap;
+        }
+        .structure-accueil-value {
+            display: inline-block;
+            padding-left: 80px;
+            font-weight: bold;
+            white-space: nowrap; /* Keep text on one line */
+            flex-grow: 0;
+        }
+        .structure-accueil-value-strech {
+            display: inline-block;
+            padding-left: 0px;
+            font-weight: bold;
+            white-space: nowrap; /* Keep text on one line */
+            flex-grow: 0;
+        }
+        /* Style for the signature section using a table */
+        .signature-container {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none; /* Make table invisible */
+        }
+        .signature-table tr,
+        .signature-table td {
+            border: none; /* Ensure no borders on rows or cells */
+        }
+        .signature-table td {
+            vertical-align: top;
+            white-space: nowrap; /* Keep text on one line */
+        }
+        .label-avis-dir {
+            width: 120px;
+            text-align: left;
+        }
+        .value-avis-dir {
+            padding-left: 15px; /* Gap between label and value */
+            font-weight: bold;
+            white-space: nowrap; /* Keep text on one line */
+        }
+        .label-avis-resp {
+            width: 150px; /* Increased width to accommodate longer label text */
+            text-align: left;
+        }
+        .value-avis-resp {
+            padding-left: 15px; /* Same gap as Directeur */
+            font-weight: bold;
+            white-space: nowrap; /* Keep text on one line */
+        }
+        .signature-line-dir,
+        .signature-line-resp {
+            width: 135px; /* Matches label width + padding-left for Directeur */
+            text-align: left;
+        }
+        .signature-line-resp {
+            width: 165px; /* Matches increased label-avis-resp width + padding-left */
+        }
+        .signature-line-value {
+            display: inline-block;
+            border-bottom: 1px dotted #000;
+            width: 150px; /* Fixed width for signature line */
+            margin-left: 10px;
+        }
+        .spacer-cell {
+            width: 100px; /* Space between Directeur and Responsable */
+        }
+    </style>
+</head>
+
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 12px; line-height: 1.85; letter-spacing: 1px; background: none;">
+    <div style="max-width: 950px; margin: 0 auto; padding: 20px; box-shadow: none; height: 100%;">
+        <div style="text-align: center; margin-bottom: -15px;">
+<img src="https://upload.wikimedia.org/wikipedia/fr/7/7d/Universit%C3%A9_Abdelmalek_Essa%C3%A2di.png" alt="Université Abdelmalek Essaadi" style="width: 100%; max-width: 350px; margin-bottom: 20px; margin-top: -70px;">
+        </div>
+
+        <div style="border: 5px solid black; padding: 8px; margin-bottom: 10px; text-align: center; font-size: 16px;">
+            Centre d'Etudes Doctorales Sciences et Techniques & Sciences Médicales
+        </div>
+
+        <h1 style="text-align: center; margin: 0; font-size: 30px;">Demande de Réinscription</h1>
+        <div style="text-align: center; color: blue; margin-top: -5px; margin-bottom: 10px;">Année Universitaire 2023/2024</div>
+
+        <center>
+            <div style="display: flex; justify-content: center; margin: 10px 0;">
+                <label style="margin-right: 40px;"><input type="checkbox" style="transform: scale(1.5)"> 2<sup>ème</sup> année</label>
+                <label style="margin-right: 40px;"><input type="checkbox" style="transform: scale(1.5)"> 3<sup>ème</sup> année</label>
+                <label style="margin-right: 40px;"><input type="checkbox" style="transform: scale(1.5)"> 4<sup>ème</sup> année</label>
+                <label style="margin-right: 40px;"><input type="checkbox" style="transform: scale(1.5)"> 5<sup>ème</sup> année</label>
+                <label><input type="checkbox" style="transform: scale(1.5)"> 6<sup>ème</sup> année</label>
+            </div>
+        </center>
+
+        <div class="form-line">
+            <span class="label-fixed-width">Année de la première inscription :</span>
+            <span class="value-align">{{ doctorant.date_envoi }}</span>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <div style="background: #d3d3d3; padding: 5px; margin-bottom: 5px; text-decoration: underline;">1. Formation doctorale :</div>
+            <div style="margin: 3px 0; font-size: 10px;">
+                <label><input type="checkbox" style="transform: scale(1.5)"> Biologie, Chimie et Géologie (BCG)</label><br>
+                <label><input type="checkbox" style="transform: scale(1.5)"> Ingénierie Pédagogique et Didactique des Sciences (IPDS)</label><br>
+                <label><input type="checkbox" style="transform: scale(1.5)"> Sciences de l'Ingénieur (IS)</label><br>
+                <label><input type="checkbox" style="transform: scale(1.5)"> Sciences Mathématiques-Physique et Nouvelles Technologies (SMPNT)</label><br>
+                <label><input type="checkbox" checked style="transform: scale(1.5)"> Sciences et Techniques de l'Ingénieur (STI)</label><br>
+                <label><input type="checkbox" style="transform: scale(1.5)"> Sciences Appliquées et Technologies Avancées (SATA)</label><br>
+                <label><input type="checkbox" style="transform: scale(1.5)"> Sciences et Innovation Technologique (SIT)</label>
+            </div>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <div style="background: #d3d3d3; padding: 5px; margin-bottom: 5px; text-decoration: underline;">2. Doctorant :</div>
+            <div style="margin: 5px 0;">
+                <label><input type="checkbox" {{ doctorant.sexe == 'FEMININ' ? 'checked' : '' }} style="transform: scale(1.5)"> Mme</label>
+                <label><input type="checkbox" {{ doctorant.sexe == 'MASCULIN' ? 'checked' : '' }} style="transform: scale(1.5)"> M.</label>
+                <div class="form-line">
+                    <span class="label-fixed-width">NOM :</span>
+                    <span class="value-align">{{ doctorant.nom }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">PRÉNOM :</span>
+                    <span class="value-align">{{ doctorant.prenom }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">N° APOGÉE :</span>
+                    <span class="value-align"></span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">CNE :</span>
+                    <span class="value-align">{{ doctorant.cne }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">CNI :</span>
+                    <span class="value-align">{{ doctorant.cin }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Date de naissance :</span>
+                    <span class="value-align">{{ doctorant.date_de_naissance ? doctorant.date_de_naissance|date('d/m/Y') : '--' }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Lieu de naissance :</span>
+                    <span class="value-align">{{ doctorant.lieu_de_naissance }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Nationalité :</span>
+                    <span class="value-align">{{ doctorant.nationalite }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Adresse :</span>
+                    <span class="value-align"></span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Numéro(s) de téléphone :</span>
+                    <span class="value-align">{{ doctorant.telephone }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Adresse électronique institutionnelle :</span>
+                    <span class="value-align">{{ doctorant.email_institutionnel }}</span>
+                </div>
+                <div class="form-line">
+                    <span class="label-fixed-width">Adresse électronique personnelle :</span>
+                    <span class="value-align">{{ doctorant.email }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <div style="background: #d3d3d3; padding: 5px; margin-bottom: 5px; text-decoration: underline;">3. Structure d'accueil :</div>
+            <div class="structure-accueil-item">
+                <span class="structure-accueil-label">Nom de la structure :</span>
+                <span class="structure-accueil-value-strech">{{ libelle_structure }}</span>
+            </div>
+            <div class="structure-accueil-item">
+                <span class="structure-accueil-label">Etablissement hébergeant la structure d'accueil :</span>
+                <span class="structure-accueil-value">{{ doctorant.etablissement }}</span>
+            </div>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <div style="background: #d3d3d3; padding: 5px; margin-bottom: 5px; text-decoration: underline;">4. Avis et signatures :</div>
+            <div class="signature-container">
+                <table class="signature-table">
+                    <!-- Row for labels and values -->
+                    <tr>
+                        <!-- Directeur -->
+                        <td class="label-avis-dir">Directeur de thèse :</td>
+                        <td class="value-avis-dir">{{ directeur_these_nom_prenom_fd }}</td>
+                        <!-- Spacer to push Responsable to the right -->
+                        <td class="spacer-cell"></td>
+                        <!-- Responsable -->
+                        <td class="label-avis-resp">Responsable de la structure :</td>
+                        <td class="value-avis-resp">{{ responsable_structure_nom_prenom }}</td>
+                    </tr>
+                    <!-- Row for signatures -->
+                    <tr>
+                        <!-- Directeur Signature -->
+                        <td class="signature-line-dir">Signature :</td>
+                        <td><span class="signature-line-value"></span></td>
+                        <!-- Spacer -->
+                        <td class="spacer-cell"></td>
+                        <!-- Responsable Signature -->
+                        <td class="signature-line-resp">Signature :</td>
+                        <td><span class="signature-line-value"></span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+                        
+        <div style="border: 2px solid black; margin-top: 10px; padding: 5px;">
+            <div style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 10px;">CADRE RÉSERVÉ À L'ADMINISTRATION du CED</div>
+            <div class="form-line">
+                <span class="label-fixed-width">Dossier reçu le :</span>
+                <span class="value-align"></span>
+            </div>
+            <center>
+                <div style="display: flex; justify-content: center; margin: 10px 0;">
+                    <label style="margin-right: 150px;"><input type="checkbox"> Favorable</label>
+                    <label style="margin-right: 150px;"><input type="checkbox"> Avec Réserve</label>
+                    <label><input type="checkbox"> Défavorable</label>
+                </div>
+            </center>
+            <div style="text-align: center; margin-top: 10px;">Visa du Directeur de CED</div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    // Function to replace NULL or empty values with '---'
+    function replaceNullWithDefault() {
+        const elements = document.querySelectorAll('.replace-null');
+        elements.forEach(function(element) {
+            if (!element.textContent || element.textContent.trim() === 'null' || element.textContent.trim() === '') {
+                element.textContent = '---';
+            }
+        });
+    }
+
+    window.onload = function() {
+        replaceNullWithDefault();
+    };
+</script>

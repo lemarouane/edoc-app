@@ -1,0 +1,1 @@
+!function(n){n.ajax({url:"examPlanning",type:"POST",success:function(r){n(".planning").html(r)},error:function(n,r,t){alert("Status: "+r),alert("Error: "+t)}})}(jQuery);

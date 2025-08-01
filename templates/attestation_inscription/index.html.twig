@@ -1,0 +1,119 @@
+{% extends "template.html.twig" %}
+
+{% block title %}{{ 'Attestation d\'inscription'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css">
+{% endblock %}
+
+{% block body %}
+    <!-- Title -->
+    <h6 class="mb-0 text-uppercase">{{ 'dem_doc'|trans }}</h6>
+    <hr/>
+
+    {% include "flaches.html.twig" %}
+
+    <!-- Student Message Based on Latest Request -->
+    {% if latestRequest %}
+        {% if latestRequest.etat == 'En cours' %}
+            <div class="alert alert-info">
+                <strong>{{ 'Votre demande est en cours de traitement. Veuillez patienter.'|trans }}</strong>
+            </div>
+        {% elseif 'Validée' in latestRequest.etat %}
+            <div class="alert alert-success">
+                <strong>{{ 'Votre demande a été validée avec succès.'|trans }}</strong>
+            </div>
+        {% elseif 'Refusée' in latestRequest.etat %}
+            <div class="alert alert-danger">
+                <strong>{{ 'Votre demande a été refusée. Raison: '|trans }} {{ latestRequest.etat|replace({'Refusée: ': ''}) }}</strong>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Allow New Request If Applicable -->
+    {% if canRequestNew %}
+        <div class="mb-4">
+            <form action="{{ path('attestation_request') }}" method="POST">
+                <button type="submit" class="btn btn-primary">{{ 'Demander une nouvelle attestation'|trans }}</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <!-- Suivi des Demandes -->
+    <h6 class="mb-0 text-uppercase">{{ 'suivi_dem'|trans }}</h6>
+    <hr/>
+
+    <!-- DataTable for Attestation Requests -->
+    <table id="attestationTable" class="table table-striped table-bordered dataTable" style="text-align:center !important; width:100%;">
+        <thead>
+            <tr>
+                <th style="text-align:center !important;">{{ 'Nom'|trans }}</th>
+                <th style="text-align:center !important;">{{ 'Prénom'|trans }}</th>
+                <th style="text-align:center !important;">{{ 'Date de demande'|trans }}</th>
+                <th style="text-align:center !important;">{{ 'État'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if latestRequest %}
+                <tr>
+                    <td>{{ latestRequest.nom }}</td>
+                    <td>{{ latestRequest.prenom }}</td>
+                    <td>{{ latestRequest.date_demande|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% if latestRequest.etat == 'En cours' %}
+                            <span class="badge bg-warning text-dark" > {{ latestRequest.etat }}</span>
+                        {% elseif 'Validée' in latestRequest.etat %}
+                            <span class="badge bg-success" > {{ latestRequest.etat }}</span>
+                        {% elseif 'Refusée' in latestRequest.etat %}
+                            <span class="badge bg-danger" > {{ latestRequest.etat|replace({'Refusée: ': ''}) }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var langue = 'fr-FR';
+            try {
+                if ($('#langue').length) {
+                    langue = $('#langue').val();
+                    if (langue == 'ar-AR') {
+                        langue = 'ar';
+                    }
+                }
+            } catch (e) {
+                console.log('Using default language');
+            }
+            
+            var langue_file = "https://cdn.datatables.net/plug-ins/1.13.1/i18n/" + langue + ".json";
+            
+            $('#attestationTable').DataTable({
+                language: {
+                    url: langue_file
+                },
+                paging: true,
+                lengthChange: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                autoWidth: false,
+                responsive: true,
+                order: [[2, 'desc']],
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 100]
+            });
+        });
+    </script>
+{% endblock %}

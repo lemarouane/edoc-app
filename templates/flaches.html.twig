@@ -1,0 +1,10 @@
+<section class="flashbag">
+{% for type, flashMessages in app.session.flashbag.all() %}
+	{% for flashMessage in flashMessages %}
+            <div class="alert alert-{{ type }}  in">
+
+                <strong> {{ flashMessage|trans }}  </strong>
+            </div>
+	{% endfor %}
+{% endfor %}
+</section>

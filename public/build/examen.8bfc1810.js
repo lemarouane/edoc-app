@@ -1,0 +1,1 @@
+(self.webpackChunk=self.webpackChunk||[]).push([[39],{6614:(n,r,a)=>{var e,t=a(9755);(e=t).ajax({url:"examPlanning",type:"POST",success:function(n){e(".planning").html(n)},error:function(n,r,a){alert("Status: "+r),alert("Error: "+a)}})}},n=>{n.O(0,[755],(()=>{return r=6614,n(n.s=r);var r}));n.O()}]);

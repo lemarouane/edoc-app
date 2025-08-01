@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html class="semi-dark color-header headercolor8">
+<head>
+    <meta charset="UTF-8" >
+    <title>{% block title %}{{'bienvenue'|trans}}{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <link rel="icon" href="{{asset('build/images/favicon-32x32.png')}}" type="image/png" />
+    <link href="{{ asset('uploads/css/icons.css') }}" rel="stylesheet" >
+    <link href="{{ asset('uploads/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet" >
+    
+    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    {% block stylesheets %}
+       
+        {{ encore_entry_link_tags('app') }}
+        {% if app.user.locale == 'ar-AR' %} 
+            {{ encore_entry_link_tags('bootstraprtl') }}
+            {{ encore_entry_link_tags('stylertl') }}
+        {% endif %}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <style type="text/css">
+            .profile-cover {
+                background-image: linear-gradient(to bottom right, rgb(26 30 33 / 50%), rgb(0 0 0 / 50%)), url({{ asset('build/images/gallery/ensat1c.jpg') }});
+                background-size: cover;
+                height: 24rem;
+                background-position: center;
+                margin: -4.0rem -1.5rem -9.5rem -1.5rem;
+                padding: 1.5rem 1.5rem 6.5rem 1.5rem;
+
+            }
+        </style>
+
+    {% endblock %}
+  
+</head>
+
+<body>
+
+
+  <!--start wrapper-->
+  <div class="wrapper">
+  
+    <!--start top header-->
+      <header class="top-header">        
+
+  {% include 'elements/horiz_navbar.html.twig' %}
+      </header>
+       <!--end top header-->
+
+        <!--start sidebar -->
+{% include 'elements/side_navbar.html.twig' %}
+       <!--end sidebar -->
+
+       <!--start content-->
+          <main class="page-content">
+                
+                {% block body %}{% endblock %}
+            
+          </main>
+       <!--end page main-->
+
+       <!--start overlay-->
+        <div class="overlay nav-toggle-icon"></div>
+       <!--end overlay-->
+
+       <!--Start Back To Top Button-->
+		     <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+       <!--End Back To Top Button-->
+ 
+       
+
+  </div>
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        {{ encore_entry_script_tags('datatable_trans') }}
+    {% endblock %}
+
+  
+
+
+</body>
+
+</html>

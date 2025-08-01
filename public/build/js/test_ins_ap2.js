@@ -1,0 +1,1 @@
+$.ajax({type:"POST",dataType:"json",url:$("#path-to-test-ap2").data("href"),success:function(t){"1"==t?$("#orientation").show():$("#orientation").hide()},error:function(){}});

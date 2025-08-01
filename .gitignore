@@ -1,0 +1,30 @@
+# Symfony
+/vendor/
+/var/
+/public/bundles/
+public/uploads/
+/public/doc/
+/translations/
+
+# .env files
+.env*
+!.env.example
+
+# Node.js
+/node_modules/
+
+# PHPStorm
+.idea/
+
+# macOS
+.DS_Store
+
+# Tests output
+/tests/_output/
+
+# Docker
+/docker/
+
+# Database dumps
+*.sql
+ 

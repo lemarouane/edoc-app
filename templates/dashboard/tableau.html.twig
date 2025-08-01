@@ -1,0 +1,152 @@
+{% extends 'template.html.twig' %}
+{% block body %}
+            
+
+            {% include "flaches.html.twig" %}
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-xl-2 row-cols-xxl-3">
+                       <div class="col">
+                         <div class="card border shadow-none radius-10">
+                           <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                              <div class="icon-box bg-light-primary border-0">
+                                <i class="bi bi-person text-primary"></i>
+                              </div>
+                              <div class="info">
+                                 <h6 class="mb-2">{{'etudiant'|trans}}</h6>
+                                 <p class="mb-1">{{ etudiant.LIB_NOM_PAT_IND }}, {{ etudiant.LIB_PR1_IND}}</p>
+                                 <p class="mb-1">{{ etudiant.LIB_AD3}}</p>
+                                 <p class="mb-1">{{ etudiant.NUM_TEL}}</p>
+                                 <p class="mb-1">&nbsp;&nbsp; </p>
+                                 <p class="mb-1">&nbsp;&nbsp;</p>
+                              </div>
+                           </div>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="col">
+                        <div class="card border shadow-none radius-10">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                              <div class="icon-box bg-light-success border-0">
+                                <i class="bi bi-book text-success"></i>
+                              </div>
+                              <div class="info">
+                                 <h6 class="mb-2">{{'info_diplome'|trans}}</h6>
+                                 <p class="mb-1"><strong>{{'nom_prenom'|trans}}</strong> : {{ etudiant.LIB_NOM_PAT_IND }}, {{ etudiant.LIB_PR1_IND}}</p>
+                                 <p class="mb-1"><strong>{{'nom_prenom_ar'|trans}}</strong> : {{ etudiant.LIB_NOM_IND_ARB }} &nbsp;&nbsp; {{ etudiant.LIB_PRN_IND_ARB}}</p>
+                                 <p class="mb-1"><strong>{{'lieu_naiss'|trans}}</strong> : {{ etudiant.LIB_VIL_NAI_ETU }} &nbsp;&nbsp; {{ etudiant.LIB_VIL_NAI_ETU_ARB }}</p>
+                                 <p class="mb-1"><strong>{{'code_massar'|trans}}</strong> : {{ etudiant.COD_NNE_IND }}</p>
+                                 <p class="mb-1"><strong>{{'cin'|trans}}</strong> : {{ etudiant.CIN_IND }}</p>
+                              </div>
+                           </div>
+                           </div>
+                          </div>
+                       </div>
+                      <div class="col">
+                        <div class="card border shadow-none radius-10">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                              <div class="icon-box bg-light-danger border-0">
+                                <i class="bi bi-geo-alt text-danger"></i>
+                              </div>
+                              <div class="info">
+                                <h6 class="mb-2">{{'inscription'|trans}}</h6>
+                                <p class="mb-1"><strong>{{'admin'|trans}}</strong> : {{ ins_Adm_E[0].LIB_ANU}}</p>
+                                <p class="mb-1"><strong>{{'pedagogique'|trans}}</strong> : {{ ins_Peda_E[0].LIB_ANU}}</p>
+                                <p class="mb-1"><strong>{{'etape'|trans}}</strong> : {{ ins_Peda_E[0].COD_ETP}}</p>
+                                <p class="mb-1"><strong>{{'code_apogee'|trans}}</strong> : {{ etudiant.COD_ETU }}</p>
+                                <p class="mb-1"><strong>{{'groupe'|trans}}</strong> : {{ groupe}}</p>
+                              </div>
+                            </div>
+                          </div>
+                         </div>
+                    </div>
+                  </div><!--end row-->
+
+                  <div class="row">
+                      <div class="col-12">
+                         <div class="card border shadow-none radius-10">
+                           <div class="card-body">
+                               <div class="table-responsive">
+                                 <table class="table table-bordered mb-0 table-striped">
+                                   <thead class="bg-light-primary">
+                                     <tr>
+                                        <th scope="col" colspan="2">{{'intitule'|trans}}</th>
+                                        <th scope="col">{{'note_sur_20'|trans}}</th>
+                                        <th scope="col">{{'pts_jury'|trans}}</th>
+                                        <th scope="col">{{'resultat'|trans}}</th>
+                                        <th scope="col">{{'session'|trans}}</th>
+                                        <th scope="col">{{'annee_univ'|trans}}</th>
+                                     </tr>
+                                   </thead>
+                                   <tbody>
+                                     {% for det in details %}
+                                            {% if 'SE' in det.COD_NEL  %}
+                                                <tr class="" >
+                                                    <td colspan="2">{{det.LIB_ELP}}</td>
+                                                    {% if det.BAR_NOT_ELP != 0  %}
+                                                        <td>{{det.NOT_ELP}}</td>
+                                                        <td>{{det.NOT_PNT_JUR_ELP}}</td>
+                                                        <td>{{det.COD_TRE}}</td>
+                                                        <td>{{det.COD_SES}}</td>
+                                                        <td>{{det.COD_ANU}}/{{det.COD_ANU + 1}}</td>
+                                                    {% else %}
+                                                        <td colspan="5" style="text-align:center" class="text-success">  </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% elseif 'MO' in det.COD_NEL %}
+                                                <tr> 
+                                                    <td colspan="2">{{det.LIB_ELP}}</td>
+                                                    {% if det.BAR_NOT_ELP != 0  %}
+                                                        <td>{{det.NOT_ELP}}</td>
+                                                        <td>{{det.NOT_PNT_JUR_ELP}}</td>
+                                                        <td>{{det.COD_TRE}}</td>
+                                                        <td>{{det.COD_SES}}</td>
+                                                        <td>{{det.COD_ANU}}/{{det.COD_ANU + 1}}</td>
+                                                    {% else %}
+                                                        <td colspan="5" style="text-align:center" class="text-success">  </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td width="10%"></td>
+                                                    <td>{{det.LIB_ELP}}</td>
+                                                    {% if det.BAR_NOT_ELP != 0  %}
+                                                        <td>{{det.NOT_ELP}}</td>
+                                                        <td>{{det.NOT_PNT_JUR_ELP}}</td>
+                                                        <td>{{det.COD_TRE}}</td>
+                                                        <td>{{det.COD_SES}}</td>
+                                                        <td>{{det.COD_ANU}}/{{det.COD_ANU + 1}}</td>
+                                                    {% else %}
+                                                        <td colspan="5" style="text-align:center" class="text-success"></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% for det1 in details1 %}
+                                                <tr>
+                                                    <td colspan="2">{{det1.COD_ETP}}</td>
+                                                    <td>{{det1.NOT_VET}}</td>
+                                                    <td></td>
+                                                    <td>{{det1.COD_TRE}}</td>
+                                                    <td>{{det1.COD_SES}}</td>
+                                                    <td>{{det1.COD_ANU}}/{{det1.COD_ANU + 1}}</td>
+                                                </tr>
+                                        {% endfor %}
+                                   </tbody>
+                                 </table>
+                               </div>
+                           </div>
+                         </div>
+                      </div>
+
+                  </div><!--end row-->
+
+                </div>
+              </div>
+            
+                
+    {% endblock %}

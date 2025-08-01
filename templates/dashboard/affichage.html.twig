@@ -1,0 +1,104 @@
+{% extends 'template.html.twig' %}
+{% block title %}{{'affichage'|trans}}{% endblock %}
+{% block body %}
+
+{% include "flaches.html.twig" %}
+<h6 class="mb-0 text-uppercase">{{'affichage'|trans}}</h6>
+<hr/>
+
+            <div class="card">
+                <div class="card-body">
+                    <!--end row-->
+                  {% include "elements/info_etudiant.html.twig" %}
+                  <br>
+                  <div class="row">
+                      <div class="col-12">
+                         <div class="card border shadow-none radius-10">
+                           <div class="card-body">
+                               <div class="table-responsive">
+                                 <table class="table table-bordered mb-0 "  style="font-weight:bold;" >
+                                   <thead class="bg-light-primary">
+                                     <tr style="text-align:center !important ;">
+                                        <th style="text-align:center !important ;" scope="col" colspan="2">{{'intitule'|trans}}</th>
+                                        <th style="text-align:center !important ;" scope="col">{{'note_sur_20'|trans}}  </th>
+                                        <th style="text-align:center !important ;" scope="col">{{'pts_jury'|trans}}</th> 
+                                        <th style="text-align:center !important ;" scope="col">{{'resultat'|trans}}</th>
+                                        <th style="text-align:center !important ;" scope="col">{{'session'|trans}}</th>
+                                        <th style="text-align:center !important ;" scope="col">{{'annee_univ'|trans}}</th>
+                                     </tr>
+                                   </thead>
+                                   <tbody>
+                                     {% for det in details %}
+                                            {% if  'SE' in det.COD_NEL %}
+                                                <tr style="background-color:#FFD580;" >
+                                                    <td style="text-align:center !important ;" colspan="2">{{det.LIB_ELP}}</td>
+                                                    {% if det.BAR_NOT_ELP != 0 and det.ETA_AVC_ELP != 'E' %}
+                                                        <td style="text-align:center !important ;">{{det.NOT_ELP}}</td>
+                                                        <td style="text-align:center !important ;">{{det.NOT_PNT_JUR_ELP}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_TRE}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_SES}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_ANU}}/{{det.COD_ANU + 1}}</td>
+                                                    {% else %}
+                                                        <td colspan="5" style="text-align:center" class="text-success">  </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% elseif 'MO' in det.COD_NEL %}
+                                                <tr style="background-color:#d7f2f3;"> 
+                                                    <td style="text-align:center !important ;" colspan="2">{{det.LIB_ELP}}</td>
+                                                    {% if det.BAR_NOT_ELP != 0  %}
+                                                        <td style="text-align:center !important ;">{{det.NOT_ELP}}</td>
+                                                        <td style="text-align:center !important ;">{{det.NOT_PNT_JUR_ELP}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_TRE}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_SES}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_ANU}}/{{det.COD_ANU + 1}}</td>
+                                                    {% else %}
+                                                        <td colspan="5" style="text-align:center" class="text-success">  </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% else %}
+                                                <tr style="background-color:white;">
+                                                    <td width="10%"></td>
+                                                    <td>{{det.LIB_ELP}}</td>
+                                                    {% if det.BAR_NOT_ELP != 0  %}
+                                                        <td style="text-align:center !important ;">{{det.NOT_ELP}}</td>
+                                                        <td style="text-align:center !important ;">{{det.NOT_PNT_JUR_ELP}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_TRE}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_SES}}</td>
+                                                        <td style="text-align:center !important ;">{{det.COD_ANU}}/{{det.COD_ANU + 1}}</td>
+                                                    {% else %}
+                                                        <td colspan="5" style="text-align:center" class="text-success"></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% for det1 in details1 %}
+                                            {% if det1.ETA_AVC_VET != 'E' %}
+                                                {% if (det1.COD_TRE=="ADM" or det1.COD_TRE=="ADMR" ) %} 
+                                                    <tr class="bg-light-success">
+                                                {% else %}
+                                                    <tr class="bg-light-danger">
+                                                {% endif %}
+                                                    <td style="text-align:center !important ;" colspan="2">{{det1.COD_ETP}}</td>
+                                                    <td style="text-align:center !important ;">{{det1.NOT_VET}}</td>
+                                                    <td style="text-align:center !important ;">{{det1.NOT_PNT_JUR_VET}}</td>
+                                                    <td style="text-align:center !important ;">{{det1.COD_TRE}}</td>
+                                                    <td style="text-align:center !important ;">{{det1.COD_SES}}</td>
+                                                    <td style="text-align:center !important ;">{{det1.COD_ANU}}/{{det1.COD_ANU + 1}}</td>
+                                                </tr>
+                                            
+                                            {% endif %}
+                                        {% endfor %}
+                                   </tbody>
+                                 </table>
+                               </div>
+                           </div>
+                         </div>
+                      </div>
+
+                  </div><!--end row-->
+
+                </div>
+              </div>
+            
+                
+    {% endblock %}

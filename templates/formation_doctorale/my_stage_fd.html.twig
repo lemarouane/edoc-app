@@ -1,0 +1,184 @@
+{% extends "template.html.twig" %}
+
+{% block title %}{{ 'formation_doctorale'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style type="text/css">
+        #formationTable td { padding: 8px !important; background-color: inherit !important; }
+        #formationTable td:last-child { display: table-cell !important; text-align: center !important; width: 120px !important; }
+        #formationTable tr td:last-child:empty { background-color: inherit !important; }
+        #formationTable tr.even td:last-child, #formationTable tr.odd td:last-child { background-color: inherit !important; }
+        .form-control.is-invalid, .form-select.is-invalid { border-color: #dc3545; }
+        .invalid-feedback { display: block; color: #dc3545; }
+        #formationTable td, #formationTable th { text-align: center; vertical-align: middle; }
+        .badge.bg-pending { background-color: #ffc107; color: #212529; }
+        .badge.bg-validated { background-color: #198754; color: white; }
+        .badge.bg-rejected { background-color: #dc3545; color: white; }
+        #formationTable td a { font-size: 0.9rem; display: inline-flex; justify-content: center; align-items: center; padding: 0.5rem; text-decoration: none; }
+        #formationTable td:last-child { display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h6 class="mb-0 text-uppercase">{{ 'formation_doctorale'|trans }}</h6>
+    <hr/>
+
+    {% include "flaches.html.twig" %}
+
+    {% if stages|length > 0 %}
+        {% set latestStage = stages|first %}
+        {% if latestStage.status == 'En cours' %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <strong>{{ 'votre_derniere_demande_stage_en_cours'|trans }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% elseif latestStage.status == 'Validé par directeur adjoint' %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{ 'votre_derniere_demande_stage_validee_dir_adj'|trans }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% elseif latestStage.status starts with 'Refusée' %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{ 'votre_derniere_demande_stage_refusee'|trans }}: {{ latestStage.status|split(': ')[1]|default('') }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% for label, messages in app.flashes %}
+        {% if label starts with 'info_student_' %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'success' %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'danger' or label == 'error' %}
+            {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="mb-4">
+        {{ form_start(form) }}
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.moduleId, {'attr': {'class': 'form-select'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.cadreStage, {'attr': {'class': 'form-control', 'style': 'display:none;'}}) }}
+                    {{ form_row(form.lieuStage, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.lettreAcceptation, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.entiteHebergante, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3" {% if form_disabled %}disabled{% endif %}>{{ 'soumettre'|trans }}</button>
+        {{ form_end(form) }}
+    </div>
+
+    <h6 class="mb-0 text-uppercase">{{ 'suivi_demandes_stages'|trans }}</h6>
+    <hr/>
+
+    <table id="formationTable" class="table table-striped table-bordered dataTable" style="width:100%;">
+        <thead>
+            <tr>
+                <th>{{ 'cadre_stage'|trans }}</th>
+                <th>{{ 'lieu_stage'|trans }}</th>
+                <th>{{ 'entite_hebergante'|trans }}</th>
+                <th>{{ 'date_debut'|trans }}</th>
+                <th>{{ 'date_fin'|trans }}</th>
+                <th>{{ 'status'|trans }}</th>
+                <th>{{ 'piece_jointe'|trans }}</th>
+                <th>{{ 'actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if stages is defined and stages|length > 0 %}
+                {% for stage in stages %}
+                    <tr>
+                        <td>{{ stage.cadreStage }}</td>
+                        <td>{{ stage.lieuStage }}</td>
+                        <td>{{ stage.entiteHebergante }}</td>
+                        <td>{{ stage.dateDebut|date('d/m/Y') }}</td>
+                        <td>{{ stage.dateFin|date('d/m/Y') }}</td>
+                        <td>
+                            {% if stage.status == 'En cours' %}
+                                <span class="badge bg-pending">{{ stage.status }}</span>
+                            {% elseif stage.status == 'Validé par directeur adjoint' %}
+                                <span class="badge bg-validated">{{ stage.status }}</span>
+                            {% elseif stage.status starts with 'Refusée' %}
+                                <span class="badge bg-rejected">{{ stage.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if stage.pdfPath is defined and stage.pdfPath is not null %}
+                                <a href="{{ stage.pdfPath }}" class="text-primary" target="_blank" title="{{ 'voir_piece_jointe'|trans }}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if stage.status == 'En cours' %}
+                                <a href="{{ path('stage_edit', {'id': stage.id}) }}" class="text-warning" title="{{ 'modifier'|trans }}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ stage.id }}"
+                                   data-stage-id="{{ stage.id }}" title="{{ 'supprimer'|trans }}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <div class="modal fade" id="deleteModal{{ stage.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ stage.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ stage.id }}">{{ 'confirmer_suppression'|trans }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ 'etes_vous_sur_de_vouloir_supprimer_cette_demande_stage'|trans }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'annuler'|trans }}</button>
+                                                <button type="button" class="btn btn-danger" onclick="deleteStage('{{ path('stage_delete', {'id': stage.id}) }}', '{{ csrf_token('delete' ~ stage.id) }}')">{{ 'supprimer'|trans }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('stages') }}
+{% endblock %}

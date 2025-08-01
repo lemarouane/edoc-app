@@ -1,0 +1,275 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}{{ 'Télécharger un Rapport PFE'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <style>
+        .form-container {
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+        .section-title {
+            background-color: #f8f9fa;
+            color: #007bff;
+            padding: 10px 15px;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        #rapportsTable td { padding: 8px !important; background-color: inherit !important; }
+        #rapportsTable td:last-child { display: table-cell !important; text-align: center !important; width: 120px !important; }
+        #rapportsTable tr td:last-child:empty { background-color: inherit !important; }
+        #rapportsTable tr.even td:last-child, #rapportsTable tr.odd td:last-child { background-color: inherit !important; }
+        .form-control.is-invalid { border-color: #dc3545; }
+        .invalid-feedback { display: block; color: #dc3545; }
+        #rapportsTable td, #rapportsTable th { text-align: center; vertical-align: middle; }
+        .badge.bg-pending { background-color: #ffc107; color: #212529; }
+        .badge.bg-validated { background-color: #198754; color: white; }
+        .badge.bg-rejected { background-color: #dc3545; color: white; }
+        #rapportsTable td a { font-size: 0.9rem; display: inline-flex; justify-content: center; align-items: center; padding: 0.5rem; text-decoration: none; }
+        #rapportsTable td:last-child { display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+        .alert-convention {
+            background-color: #e3f2fd;
+            border: 1px solid #2196f3;
+            color: #0d47a1;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.25rem;
+        }
+        .alert-dismissible .btn-close { padding: 0.75rem 1.25rem; }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DataTable
+            $('#rapportsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json'
+                },
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                lengthChange: true,
+                pageLength: 10,
+                responsive: true,
+                order: [[0, 'desc']]
+            });
+
+            // Delete rapport handler
+            window.deleteRapport = function(url, csrfToken) {
+                console.log('Attempting to delete rapport with URL:', url, 'and CSRF token:', csrfToken);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: '_token=' + encodeURIComponent(csrfToken)
+                })
+                .then(response => {
+                    console.log('Delete response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Delete response data:', data);
+                    if (data.success) {
+                        window.location.href = '{{ path('app_etudiant_upload_rapport') }}';
+                    } else {
+                        window.location.href = '{{ path('app_etudiant_upload_rapport') }}';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during deletion:', error);
+                    window.location.href = '{{ path('app_etudiant_upload_rapport') }}';
+                });
+            };
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <h6 class="mb-0 text-uppercase">{{ 'Importer la version finale de votre Rapport PFE'|trans }}</h6>
+    <hr/>
+
+    {% for label, messages in app.flashes %}
+        {% if label == 'success' %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'error' or label == 'danger' %}
+            {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'info' %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% elseif label == 'warning' %}
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ message|trans }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="form-container">
+        {{ form_start(form, {'attr': {'action': path('app_etudiant_upload_rapport'), 'method': 'POST', 'enctype': 'multipart/form-data'}}) }}
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="form-group">
+                    {{ form_label(form.pdfFile) }}
+                    <div class="custom-file">
+                        {{ form_widget(form.pdfFile, {'attr': {'class': 'form-control custom-file-input', 'style': 'padding: 0.75rem 1rem; border-radius: 0.5rem; border: 2px solid #007bff; background-color: #f8f9fa;'}}) }}
+                    </div>
+                    {{ form_errors(form.pdfFile) }}
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center" style="font-size:1.1rem; padding:0.75rem 0; border-radius:0.5rem; box-shadow:0 2px 8px rgba(0,123,255,0.08);">
+                    <i class="bi bi-cloud-upload-fill me-2" style="font-size:1.3rem;"></i>
+                    {{ 'Envoyer'|trans }}
+                </button>
+            </div>
+
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    {% if rapports is not empty %}
+        <h6 class="mb-0 text-uppercase">{{ 'Suivi des rapports PFE'|trans }}</h6>
+        <hr/>
+        <table id="rapportsTable" class="table table-striped table-bordered dataTable" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>{{ 'ID'|trans }}</th>
+                    <th>{{ 'Filière'|trans }}</th>
+                    <th>{{ 'Sujet'|trans }}</th>
+                    <th>{{ 'Date de début'|trans }}</th>
+                    <th>{{ 'Date de fin'|trans }}</th>
+                    <th>{{ 'Étudiant'|trans }}</th>
+                    <th>{{ 'Responsable'|trans }}</th>
+                    <th>{{ 'Statut'|trans }}</th>
+                    <th>{{ 'Actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rapport in rapports %}
+                    <tr>
+                        <td>{{ rapport.id }}</td>
+                        <td>{{ rapport.filiere }}</td>
+                        <td>{{ rapport.sujet|default('N/A') }}</td>
+                        <td>{{ rapport.dateDebut|date('d/m/Y')|default('N/A') }}</td>
+                        <td>{{ rapport.dateFin|date('d/m/Y')|default('N/A') }}</td>
+                        <td>{{ rapport.etudiantNom }} {{ rapport.etudiantPrenom }}</td>
+                        <td>{{ rapport.encadrantNom|default('N/A') }} {{ rapport.encadrantPrenom|default('') }}</td>
+                        <td>
+                            {% if rapport.status == 'En cours' %}
+                                <span class="badge bg-pending">{{ rapport.status|trans }}</span>
+                            {% elseif rapport.status == 'Validé' %}
+                                <span class="badge bg-validated">{{ rapport.status|trans }}</span>
+                            {% elseif rapport.status starts with 'Refusé' %}
+                                <span class="badge bg-rejected">{{ rapport.status|trans }}</span>
+                            {% else %}
+                                <span class="badge bg-pending">{{ rapport.status|trans }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('app_etudiant_rapport_view', {'id': rapport.id}) }}" class="text-primary" title="{{ 'Voir'|trans }}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% if rapport.status == 'En cours' %}
+
+                                <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ rapport.id }}"
+                                   data-rapport-id="{{ rapport.id }}" title="{{ 'Supprimer'|trans }}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <div class="modal fade" id="deleteModal{{ rapport.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ rapport.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ rapport.id }}">{{ 'Confirmer la suppression'|trans }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ 'Êtes-vous sûr de vouloir supprimer ce rapport ?'|trans }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Annuler'|trans }}</button>
+                                                <button type="button" class="btn btn-danger" onclick="deleteRapport('{{ path('app_etudiant_rapport_delete', {'id': rapport.id}) }}', '{{ csrf_token('delete' ~ rapport.id) }}')">{{ 'Supprimer'|trans }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ 'Aucun rapport disponible pour le moment.'|trans }}</p>
+    {% endif %}
+{% endblock %}

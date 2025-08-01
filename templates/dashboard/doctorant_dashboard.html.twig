@@ -1,0 +1,522 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    {% include "flaches.html.twig" %}
+
+    <div class="card border shadow-none">
+        <div class="card-header py-3">
+            <div class="row align-items-center g-3">
+                <div class="col-12 col-lg-6">
+                    <h5 class="mb-0">{{ doctorant.nom }} {{ doctorant.prenom }}</h5>
+                </div>
+                <div class="col-12 col-lg-6 text-md-end">
+                    <!-- Additional buttons or links can go here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card-header py-2 bg-light">
+            <div class="row row-cols-1 row-cols-lg-4">
+                <!-- Profile Picture Section -->
+                <div class="col">
+                    <img id='file' src="{{ asset(app.user.image.getWebPath) }}" class="rounded-circle shadow" width="180" height="180" alt="">
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="col">
+                    <div class="">
+                        <address class="m-t-5 m-b-5">
+                            <strong>
+                                <p class="mb-1">{{ doctorant.nom }} {{ doctorant.prenom }}</p>
+                            </strong>
+                            <p class="mb-1">{{ 'cin'|trans }} : {{ doctorant.cin }}</p>
+                            <p class="mb-1">{{ 'cne'|trans }} : {{ doctorant.cne }}</p>
+                            <p class="mb-1">{{ 'tel'|trans }} : {{ doctorant.telephone }}</p>
+                            <p class="mb-1">{{ 'email'|trans }} : {{ doctorant.email }}</p>
+                            <p class="mb-1">{{ 'email_institutionnel'|trans }} : {{ doctorant.email_institutionnel }}</p>
+                            <p class="mb-1">{{ 'code_postal'|trans }} : {{ doctorant.code_postal }}</p>
+                        </address>
+                    </div>
+                </div>
+
+                <!-- Additional Personal Information Section -->
+                <div class="col">
+                    <div class="">
+                        <address class="m-t-5 m-b-5">
+                            <strong>{{ 'info_perso'|trans }}</strong><br>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'nom_prenom'|trans }}</p>
+                                </div>
+                                <div class="ms-auto info">
+                                    <p class="mb-0">{{ doctorant.nom }}, {{ doctorant.prenom }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'nom_prenom_ar'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">
+                                        <span dir="rtl">{{ doctorant.nom_arabe|raw }}</span> &nbsp;&nbsp; 
+                                        <span dir="rtl">{{ doctorant.prenom_arabe|raw }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'lieu_naiss'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">{{ doctorant.lieu_de_naissance }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'date_naiss'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">{{ doctorant.date_de_naissance|date('Y-m-d') }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'province_naiss'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">{{ doctorant.province_de_naissance }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'pays_naiss'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">{{ doctorant.pays_naissance }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'nationalite'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">{{ doctorant.nationalite }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-0">
+                                <div>
+                                    <p class="mb-0">{{ 'sexe'|trans }}</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <p class="mb-0">{{ doctorant.sexe }}</p>
+                                </div>
+                            </div>
+                        </address>
+                    </div>
+                </div>
+
+                <!-- Administrative Information Section -->
+                <div class="col">
+                    <div class="">
+                        <div class=""><b>{{ 'info_admini'|trans }}</b></div>
+                        <div class="invoice-detail">
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'etablissement'|trans }}</p>
+                            </div>
+                            <div class="ms-auto info">
+                                <p class="mb-0">{{ doctorant.etablissement }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'organisme_employeur'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.organisme_employeur }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'profession'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.profession }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'sujet'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.sujet }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'date_envoi'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.date_envoi }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Information Section -->
+        <div class="card-header py-2 bg-light">
+            <div class="row row-cols-1 row-cols-lg-4">
+                <div class="col">
+                    <div class="">
+                        <div class=""><b>{{ 'academic_info'|trans }}</b></div>
+                        <div class="invoice-detail">
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'academie_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto info">
+                                <p class="mb-0">{{ doctorant.academie_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'province_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.province_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'lycee_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.lycee_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'mention_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.mention_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'note_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.note_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'date_obtention_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.date_obtention_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'pays_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.pays_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'secteur_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.secteur_bac }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'specialite_bac'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.specialite_bac }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="">
+                        <div class=""><b>{{ 'higher_education_info'|trans }}</b></div>
+                        <div class="invoice-detail">
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'licence_etablissement'|trans }}</p>
+                            </div>
+                            <div class="ms-auto info">
+                                <p class="mb-0">{{ doctorant.licence_etablissement }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'mention_licence'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.mention_licence }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'date_obtention_licence'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.date_obtention_licence }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'licence_pays'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.licence_pays }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'licence_specialite'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.licence_specialite }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'universite_licence'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.universite_licence }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'note_licence'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.note_licence }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'licence_secteur'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.licence_secteur }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="">
+                        <div class=""><b>{{ 'master_info'|trans }}</b></div>
+                        <div class="invoice-detail">
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'master_etablissement'|trans }}</p>
+                            </div>
+                            <div class="ms-auto info">
+                                <p class="mb-0">{{ doctorant.master_etablissement }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'note_master'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.note_master }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'mention_master'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.mention_master }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'date_obtention_master'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.date_obtention_master }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'pays_obtention_master'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.pays_obtention_master }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'master_specialite'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.master_specialite }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'master_universite'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.master_universite }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'master_secteur'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ doctorant.master_secteur }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="">
+                        <div class=""><b>{{ 'structure_info'|trans }}</b></div>
+                        <div class="invoice-detail">
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'nom_structure'|trans }}</p>
+                            </div>
+                            <div class="ms-auto info">
+                                <p class="mb-0">{{ structure.libelle_structure }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'abrev_structure'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ structure.abrev_structure }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <div class=""><b>{{ 'personnel_info'|trans }}</b></div>
+                        <div class="invoice-detail">
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'nom_personnel'|trans }}</p>
+                            </div>
+                            <div class="ms-auto info">
+                                <p class="mb-0">{{ personnel.nom }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'prenom_personnel'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ personnel.prenom }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-0">
+                            <div>
+                                <p class="mb-0">{{ 'telephone_personnel'|trans }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <p class="mb-0">{{ personnel.tel }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inscriptions Table Section -->
+        <!-- Creative separator between data sections and Inscriptions -->
+        <div class="my-4 d-flex align-items-center justify-content-center">
+            <hr class="flex-grow-1" style="border-top: 2px dashed #0d6efd; opacity: 0.5;">
+            <span class="mx-3 px-3 py-1 rounded-pill bg-primary text-white fw-bold shadow-sm" style="font-size: 1.1rem;">
+            <i class="bi bi-arrow-down-circle-fill me-2"></i>{{ 'Inscriptions'|trans }}
+            </span>
+            <hr class="flex-grow-1" style="border-top: 2px dashed #0d6efd; opacity: 0.5;">
+        </div>
+        <div class="card-header py-2 bg-light">
+            {% if inscriptions is not empty %}
+                <table class="table table-striped table-bordered" style="border: transparent;">
+                    <thead>
+                        <tr>
+                            <th class="text-center">{{ 'Année'|trans }}</th>
+                            <th class="text-center">{{ 'Niveau'|trans }}</th>
+                            <th class="text-center">{{ 'Document'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inscription in inscriptions %}
+                            <tr>
+                                <td class="text-center">{{ inscription.annee }}</td>
+                                <td class="text-center">{{ inscription.niveau_intitule }}</td>
+                                <td class="text-center">
+                                    {% if inscription.niveau_intitule is same as('1ère année') %}
+                                        {{ ''|trans }}
+                                    {% else %}
+                                        {% if inscription.piece_jointe %}
+                                            <a href="{{ asset('uploads/Reinscription_fd/' ~ inscription.piece_jointe) }}" class="text-primary d-inline-flex align-items-center gap-1" target="_blank" title="{{ 'Voir PDF'|trans }}">
+                                                <i class="bi bi-eye-fill" style="font-size: 1.2rem; color: #0d6efd;"></i> <span>{{ 'Voir'|trans }}</span>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>{{ 'Aucune inscription enregistrée.'|trans }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Footer Section -->
+        <div class="card-footer py-3">
+            <p class="text-center mb-2">
+                CONTACT
+            </p>
+            <p class="text-center d-flex align-items-center gap-3 justify-content-center mb-0">
+                <span class=""><i class="bi bi-globe"></i> www.ensat.ac.ma</span>
+                <span class=""><i class="bi bi-envelope-fill"></i> gcvre@uae.ac.ma</span>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.card p.mb-0').forEach(function (element) {
+                if (element.textContent.trim() === '' || element.textContent.trim().toLowerCase() === 'null') {
+                    element.textContent = '--';
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
+
+
+

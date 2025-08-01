@@ -1,0 +1,80 @@
+```twig
+{% extends 'etudiant/base.html.twig' %}
+
+{% block title %}
+    {{ 'Détails du Stage'|trans }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .card {
+            margin-top: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4">{{ 'Détails du Stage'|trans }}</h1>
+
+        {% for flash_error in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">
+                {{ flash_error|trans }}
+            </div>
+        {% endfor %}
+        {% for flash_info in app.flashes('info') %}
+            <div class="alert alert-info" role="alert">
+                {{ flash_info|trans }}
+            </div>
+        {% endfor %}
+        {% for flash_warning in app.flashes('warning') %}
+            <div class="alert alert-warning" role="alert">
+                {{ flash_warning|trans }}
+            </div>
+        {% endfor %}
+
+        {% if stage %}
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ 'Informations du Stage'|trans }}</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>{{ 'ID Stage'|trans }}:</strong> {{ stage.id }}</p>
+                    <p><strong>{{ 'Filière'|trans }}:</strong> {{ stage.filiere }}</p>
+                    <p><strong>{{ 'Sujet'|trans }}:</strong> {{ stage.sujet|default('N/A') }}</p>
+                    <p><strong>{{ 'Date de début'|trans }}:</strong> {{ stage.dateDebut|date('d/m/Y')|default('N/A') }}</p>
+                    <p><strong>{{ 'Date de fin'|trans }}:</strong> {{ stage.dateFin|date('d/m/Y')|default('N/A') }}</p>
+                    <p><strong>{{ 'Type Stage ID'|trans }}:</strong> {{ stage.typeStage_id }}</p>
+                    <p><strong>{{ 'Statut'|trans }}:</strong> {{ stage.statut }}</p>
+                    <p><strong>{{ 'Niveau'|trans }}:</strong> {{ stage.niveau|default('N/A') }}</p>
+                    <p><strong>{{ 'Année Universitaire'|trans }}:</strong> {{ stage.anneeuniv|default('N/A') }}</p>
+                    <p><strong>{{ 'Téléphone'|trans }}:</strong> {{ stage.phone|default('N/A') }}</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3>{{ 'Superviseur'|trans }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if supervisor %}
+                        <p><strong>{{ 'Nom'|trans }}:</strong> {{ supervisor.nom }}</p>
+                        <p><strong>{{ 'Prénom'|trans }}:</strong> {{ supervisor.prenom }}</p>
+                        <p><strong>{{ 'Rôle'|trans }}:</strong> {{ supervisor.role|trans }}</p>
+                    {% else %}
+                        <p>{{ 'Aucun superviseur assigné'|trans }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <p>{{ 'Aucun stage actif trouvé pour votre profil.'|trans }}</p>
+        {% endif %}
+
+        <a href="{{ path('app_etudiant_dashboard') }}" class="btn btn-primary mt-4">{{ 'Retour au tableau de bord'|trans }}</a>
+    </div>
+{% endblock %}
+```
