@@ -39,11 +39,15 @@ class RapportPfeController extends AbstractController
 
         // Initialize DBAL connections
         $config = new Configuration();
+        // Get the database URL from environment variable
+        $pgiDocDbUrl = $_ENV['DATABASE_URL'] ?? getenv('DATABASE_URL');
         $pgiDocDbConn = DriverManager::getConnection([
-            'url' => 'mysql://root:@127.0.0.1:3306/pgi_doc_db?charset=UTF8'
+            'url' => $pgiDocDbUrl
         ], $config);
+        // Get the database URL for pgi_ensa_db from environment variable
+        $pgiEnsaDbUrl = $_ENV['CUSTOMER_DATABASE_URL'] ?? getenv('CUSTOMER_DATABASE_URL');
         $pgiEnsaDbConn = DriverManager::getConnection([
-            'url' => 'mysql://root:@127.0.0.1:3306/pgi_ensa_db?charset=UTF8'
+            'url' => $pgiEnsaDbUrl
         ], $config);
 
         $user = $security->getUser();

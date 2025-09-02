@@ -83,9 +83,9 @@ class DocumentController extends AbstractController
         // Check CVthèque completion
         $hasCv = $em->getRepository(Cvtheque::class)->cvExist($usr->getId()) === "True";
 
-        // Check for validated PFE rapport using raw SQL
+        // Check for validated PFE rapport with encadrant_id
         $hasValidRapport = $conn->fetchOne(
-            'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status',
+            'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status AND encadrant_id IS NOT NULL',
             ['cod_etu' => $etudiant["COD_ETU"], 'status' => 'Validé']
         ) !== false;
 
@@ -177,12 +177,12 @@ class DocumentController extends AbstractController
 
                     if (empty($releveValide)) {
                         $em->persist($releveAttestation);
-                        $this->get('session')->getFlashBag()->add('success', $translator->trans('msg_doc_1') . " " . $codeEtape . ")");
+                        $this->addFlash('success', $translator->trans('msg_doc_1') . " " . $codeEtape . ")");
                     } else {
-                        $this->get('session')->getFlashBag()->add('danger', $translator->trans('msg_doc_2') . " " . $releveValide[0]->getCodeEtape() . " " . $translator->trans('le') . " " . $releveValide[0]->getDateDemande()->format('d-m-Y H:i:s') . ".");
+                        $this->addFlash('danger', $translator->trans('msg_doc_2') . " " . $releveValide[0]->getCodeEtape() . " " . $translator->trans('le') . " " . $releveValide[0]->getDateDemande()->format('d-m-Y H:i:s') . ".");
                     }
                 } else {
-                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_3");
+                    $this->addFlash('danger', "msg_doc_3");
                     return new RedirectResponse($this->generateUrl('app_document'));
                 }
             }
@@ -211,12 +211,12 @@ class DocumentController extends AbstractController
 
                     if (empty($attestationValide)) {
                         $em->persist($releveAttestation1);
-                        $this->get('session')->getFlashBag()->add('success', $translator->trans('msg_doc_4') . " " . $codeEtape . ")");
+                        $this->addFlash('success', $translator->trans('msg_doc_4') . " " . $codeEtape . ")");
                     } else {
-                        $this->get('session')->getFlashBag()->add('danger', $translator->trans('msg_doc_5') . " " . $attestationValide[0]->getCodeEtape() . " " . $translator->trans('le') . " " . $attestationValide[0]->getDateDemande()->format('d-m-Y H:i:s'));
+                        $this->addFlash('danger', $translator->trans('msg_doc_5') . " " . $attestationValide[0]->getCodeEtape() . " " . $translator->trans('le') . " " . $attestationValide[0]->getDateDemande()->format('d-m-Y H:i:s'));
                     }
                 } else {
-                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_6");
+                    $this->addFlash('danger', "msg_doc_6");
                     return new RedirectResponse($this->generateUrl('app_document'));
                 }
             }
@@ -234,10 +234,10 @@ class DocumentController extends AbstractController
             $carteD = $em->getRepository(EtuDiplomeCarte::class)->rechercheByDecision1($usr->getId(), 'Duplicata', 'Carte');
             if ($carte) {
                 if ($document['carte'] == 'Originale') {
-                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_7");
+                    $this->addFlash('danger', "msg_doc_7");
                 } elseif ($document['carte'] == 'Duplicata') {
                     if ($carteD) {
-                        $this->get('session')->getFlashBag()->add('danger', "msg_doc_8");
+                        $this->addFlash('danger', "msg_doc_8");
                     } else {
                         $carteE = $em->getRepository(EtuDiplomeCarte::class)->rechercheByDecision($usr->getId(), 'Originale', 'Carte');
                         if ($carteE) {
@@ -245,9 +245,9 @@ class DocumentController extends AbstractController
                             $diplomeCarte->setValueType('Duplicata');
                             $diplomeCarte->setDecision('-1');
                             $em->persist($diplomeCarte);
-                            $this->get('session')->getFlashBag()->add('success', "msg_doc_9");
+                            $this->addFlash('success', "msg_doc_9");
                         } else {
-                            $this->get('session')->getFlashBag()->add('danger', "msg_doc_10");
+                            $this->addFlash('danger', "msg_doc_10");
                         }
                     }
                 }
@@ -257,19 +257,24 @@ class DocumentController extends AbstractController
                     $diplomeCarte->setValueType('Originale');
                     $diplomeCarte->setDecision('-1');
                     $em->persist($diplomeCarte);
-                    $this->get('session')->getFlashBag()->add('success', "msg_doc_11");
+                    $this->addFlash('success', "msg_doc_11");
                 } elseif ($document['carte'] == 'Duplicata') {
-                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_12");
+                    $this->addFlash('danger', "msg_doc_12");
                 } else {
-                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_13");
+                    $this->addFlash('danger', "msg_doc_13");
                 }
             }
         }
         if (isset($document['diplome'])) {
-            $e = $this->getDoctrine()->getManager();
+            // Check CVthèque and validated PFE rapport before allowing diploma request
+            $hasCv = $em->getRepository(Cvtheque::class)->cvExist($usr->getId()) === "True";
+            $hasValidRapport = $conn->fetchOne(
+                'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status AND encadrant_id IS NOT NULL',
+                ['cod_etu' => $etudiant["COD_ETU"], 'status' => 'Validé']
+            ) !== false;
 
-            if ($e->getRepository(Cvtheque::class)->cvExist($usr->getId()) != "True") {
-                $this->get('session')->getFlashBag()->add('danger', "msg_doc_cvtheque");
+            if (!$hasCv || !$hasValidRapport) {
+                $this->addFlash('danger', "msg_doc_cvtheque_or_rapport");
             } else {
                 if (!empty($ins_dip)) {
                     $diplomeCarte1 = new EtuDiplomeCarte();
@@ -282,10 +287,10 @@ class DocumentController extends AbstractController
                     $diplomeD = $em->getRepository(EtuDiplomeCarte::class)->rechercheByDecision1($usr->getId(), 'Duplicata', 'Diplome');
                     if ($diplome) {
                         if ($document['diplome'] == 'Originale') {
-                            $this->get('session')->getFlashBag()->add('danger', "msg_doc_14");
+                            $this->addFlash('danger', "msg_doc_14");
                         } elseif ($document['diplome'] == 'Duplicata') {
                             if ($diplomeD) {
-                                $this->get('session')->getFlashBag()->add('danger', "msg_doc_15");
+                                $this->addFlash('danger', "msg_doc_15");
                             } else {
                                 $diplomeE = $em->getRepository(EtuDiplomeCarte::class)->rechercheByDecision($usr->getId(), 'Originale', 'Diplome');
                                 if ($diplomeE) {
@@ -293,9 +298,9 @@ class DocumentController extends AbstractController
                                     $diplomeCarte1->setValueType('Duplicata');
                                     $diplomeCarte1->setDecision('-1');
                                     $em->persist($diplomeCarte1);
-                                    $this->get('session')->getFlashBag()->add('success', "msg_doc_16");
+                                    $this->addFlash('success', "msg_doc_16");
                                 } else {
-                                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_17");
+                                    $this->addFlash('danger', "msg_doc_17");
                                 }
                             }
                         }
@@ -307,13 +312,13 @@ class DocumentController extends AbstractController
 
                             $laureat->setidUser($em->getRepository(Etudiants::class)->find($usr->getId()));
                             $em->persist($diplomeCarte1);
-                            $this->get('session')->getFlashBag()->add('success', "msg_doc_22");
+                            $this->addFlash('success', "msg_doc_22");
                         } elseif ($document['diplome'] == 'Duplicata') {
-                            $this->get('session')->getFlashBag()->add('danger', "msg_doc_23");
+                            $this->addFlash('danger', "msg_doc_23");
                         }
                     }
                 } else {
-                    $this->get('session')->getFlashBag()->add('danger', "msg_doc_24");
+                    $this->addFlash('danger', "msg_doc_24");
                 }
             }
         }
@@ -329,7 +334,7 @@ class DocumentController extends AbstractController
                 $attestationDem = $em->getRepository(EtuAttestation::class)->findBy(array('codeEtudiant' => $usr->getId(), 'anneeUniv' => $anneeUniversitaire['COD_ANU']), array('dateDemande' => 'DESC'), $limit = 1);
                 if ($attestationDem) {
                     if ($attestationDem[0]->getDecision() == '-1') {
-                        $this->get('session')->getFlashBag()->add('danger', "msg_doc_25");
+                        $this->addFlash('danger', "msg_doc_25");
                     } else {
                         if ($attestationDem[0]->getDecision() == '0') {
                             $attestationAcc = $em->getRepository(EtuAttestation::class)->findBy(array('codeEtudiant' => $usr->getId(), 'anneeUniv' => $anneeUniversitaire['COD_ANU'], 'decision' => '1'), array('dateDemande' => 'DESC'), $limit = 1);
@@ -340,15 +345,15 @@ class DocumentController extends AbstractController
                                 $diff = strtotime($result) - strtotime($attestationAcc[0]->getDateValidation()->format('d-m-Y H:i:s'));
                                 $nbJours = $diff / 86400;
                                 if ($nbJours >= 90) {
-                                    $this->get('session')->getFlashBag()->add('success', "msg_doc_26");
+                                    $this->addFlash('success', "msg_doc_26");
                                     $attestation->setDecision('-1');
                                     $em->persist($attestation);
                                 } else {
                                     $y = date('d-m-Y H:i:s', strtotime('+3 month', strtotime($attestationAcc[0]->getDateValidation()->format('d-m-Y H:i:s'))));
-                                    $this->get('session')->getFlashBag()->add('danger', $translator->trans('msg_doc_27') . " " . $attestationAcc[0]->getDateValidation()->format('d-m-Y H:i:s') . " , " . $translator->trans('msg_doc_27_bis') . " " . $y . ".");
+                                    $this->addFlash('danger', $translator->trans('msg_doc_27') . " " . $attestationAcc[0]->getDateValidation()->format('d-m-Y H:i:s') . " , " . $translator->trans('msg_doc_27_bis') . " " . $y . ".");
                                 }
                             } else {
-                                $this->get('session')->getFlashBag()->add('success', "msg_doc_28");
+                                $this->addFlash('success', "msg_doc_28");
                                 $attestation->setDecision('-1');
                                 $em->persist($attestation);
                             }
@@ -359,22 +364,22 @@ class DocumentController extends AbstractController
                             $diff1 = strtotime($result1) - strtotime($attestationDem[0]->getDateValidation()->format('d-m-Y H:i:s'));
                             $nbJours1 = $diff1 / 86400;
                             if ($nbJours1 >= 90) {
-                                $this->get('session')->getFlashBag()->add('success', "msg_doc_29");
+                                $this->addFlash('success', "msg_doc_29");
                                 $attestation->setDecision('-1');
                                 $em->persist($attestation);
                             } else {
                                 $y1 = date('d-m-Y H:i:s', strtotime('+3 month', strtotime($attestationDem[0]->getDateValidation()->format('d-m-Y H:i:s'))));
-                                $this->get('session')->getFlashBag()->add('danger', $translator->trans('msg_doc_30') . " " . $attestationDem[0]->getDateValidation()->format('d-m-Y H:i:s') . " , " . $translator->trans('msg_doc_30_bis') . " " . $y1 . ".");
+                                $this->addFlash('danger', $translator->trans('msg_doc_30') . " " . $attestationDem[0]->getDateValidation()->format('d-m-Y H:i:s') . " , " . $translator->trans('msg_doc_30_bis') . " " . $y1 . ".");
                             }
                         }
                     }
                 } else {
-                    $this->get('session')->getFlashBag()->add('success', "msg_doc_31");
+                    $this->addFlash('success', "msg_doc_31");
                     $attestation->setDecision('-1');
                     $em->persist($attestation);
                 }
             } else {
-                $this->get('session')->getFlashBag()->add('danger', "msg_doc_24");
+                $this->addFlash('danger', "msg_doc_24");
             }
         }
         $em->flush();
@@ -390,44 +395,34 @@ class DocumentController extends AbstractController
         $usr = $security->getUser();
         $finder = new Finder();
         if ($type == 'B') {
-            // find all files in the current directory
             $finder->files()->in($this->getParameter('upload_doc'))->name($usr->getCode() . '.pdf');
-
-            // check if there are any search results
             if ($finder->hasResults()) {
-                // load the file from the filesystem
                 $file = new File($this->getParameter('upload_doc') . $usr->getCode() . '.pdf');
                 return $this->file($file);
             } else {
-                $this->get('session')->getFlashBag()->add('danger', "msg_doc_32");
+                $this->addFlash('danger', "msg_doc_32");
                 return new RedirectResponse($this->generateUrl('app_dashboard'));
             }
         } elseif ($type == 'D') {
-            // find all files in the current directory
             $finder1 = $finder->files()->in($this->getParameter('upload_doc'))->name($usr->getCode() . '_d.pdf');
-            // check if there are any search results
             if ($finder1->hasResults()) {
-                // load the file from the filesystem
                 $file = new File($this->getParameter('upload_doc') . $usr->getCode() . '_d.pdf');
                 return $this->file($file);
             } else {
-                $this->get('session')->getFlashBag()->add('danger', "msg_doc_33");
+                $this->addFlash('danger', "msg_doc_33");
                 return new RedirectResponse($this->generateUrl('app_dashboard'));
             }
         } elseif ($type == 'L') {
-            // find all files in the current directory
             $finder3 = $finder->files()->in($this->getParameter('upload_doc'))->name($usr->getCode() . '_l.pdf');
-            // check if there are any search results
             if ($finder3->hasResults()) {
-                // load the file from the filesystem
                 $file = new File($this->getParameter('upload_doc') . $usr->getCode() . '_l.pdf');
                 return $this->file($file);
             } else {
-                $this->get('session')->getFlashBag()->add('danger', "msg_doc_34");
+                $this->addFlash('danger', "msg_doc_34");
                 return new RedirectResponse($this->generateUrl('app_dashboard'));
             }
         } else {
-            $this->get('session')->getFlashBag()->add('danger', "msg_doc_35");
+            $this->addFlash('danger', "msg_doc_35");
             return new RedirectResponse($this->generateUrl('app_dashboard'));
         }
     }
@@ -439,17 +434,13 @@ class DocumentController extends AbstractController
     {
         $usr = $security->getUser();
         $em = $this->getDoctrine()->getManager('default');
-        $usr = $security->getUser();
 
         $lien = $request->files->get('fileemploi');
 
-        // this condition is needed because the 'brochure' field is not required
-        // so the PDF file must be processed only when a file is uploaded
         if ($lien) {
             $originalFilename = pathinfo($lien->getClientOriginalName(), PATHINFO_FILENAME);
             $newFilename = sha1(uniqid(mt_rand(), true)) . '.' . $lien->guessExtension();
 
-            // Move the file to the directory where brochures are stored
             try {
                 if ($usr->getImage()->getPath() != 'anonymous.png') {
                     unlink($usr->getImage()->getAbsolutePath());
@@ -461,7 +452,7 @@ class DocumentController extends AbstractController
                 $em->flush();
                 return new JsonResponse("1");
             } catch (FileException $e) {
-                // ... handle exception if something happens during file upload
+                return new JsonResponse("0");
             }
         } else {
             return new JsonResponse("0");

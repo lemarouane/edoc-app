@@ -37,7 +37,13 @@ Encore
     .addEntry('stages', './assets/js/stages.js')
     .addEntry('reinscription_fd', './assets/js/reinscription_fd.js')
     .addEntry('conventions', './assets/js/conventions.js')
-    
+
+    .addEntry('cvtheque', './assets/js/cvtheque.js')
+    .addEntry('experience_cvtheque', './assets/js/experience_cvtheque.js')
+    .addEntry('clubs_cvtheque', './assets/js/clubs_cvtheque.js')
+    .addEntry('formations_cvtheque', './assets/js/formations_cvtheque.js')
+
+
 
 
 
