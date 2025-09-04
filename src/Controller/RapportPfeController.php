@@ -105,8 +105,8 @@ class RapportPfeController extends AbstractController
 
         if (!$stage) {
             $this->logger->debug('No stage found for user_id: ' . $etudiantId);
-            $this->addFlash('error', 'Aucun stage actif trouvé pour votre profil.');
-            return $this->redirectToRoute('app_login');
+            $this->addFlash('danger', 'Aucun stage actif trouvé pour votre profil.');
+            return $this->redirectToRoute('app_dashboard');
         }
 
         $stageId = $stage['id'];

@@ -224,13 +224,12 @@
     {% include "flaches.html.twig" %}
 
     <!-- Student Message Based on Latest Reinscription -->
-    {% if reinscriptions is defined and reinscriptions|length > 0 %}
-        {% set latestReinscription = reinscriptions|first %}
-        {% if latestReinscription.status == 'Submitted' %}
+    {% if reinscriptions is defined and reinscriptions|length > 0 and latest_reinscription is not null %}
+        {% if latest_reinscription.statut == 'En cours' %}
             <div class="alert alert-info">
                 <strong>{{ 'votre_derniere_demande_est_en_cours'|trans }}</strong>
             </div>
-        {% elseif latestReinscription.status == 'PDF Generated' %}
+        {% elseif latest_reinscription.statut == 'PDF Generated' %}
             <div class="alert alert-success">
                 <strong>{{ 'votre_derniere_demande_a_ete_validee'|trans }}</strong>
             </div>
@@ -273,56 +272,56 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="discipline">{{ 'discipline'|trans }}</label>
-                        <input type="text" id="discipline" name="discipline" placeholder="{{ 'entrez_discipline'|trans }}">
+                        <label for="discipline">{{ 'discipline'|trans }} <span class="text-danger">*</span></label>
+                        <input type="text" id="discipline" name="discipline" placeholder="{{ 'entrez_discipline'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.discipline|default('') : '' }}" required>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="specialite">{{ 'specialite'|trans }}</label>
-                        <input type="text" id="specialite" name="specialite" placeholder="{{ 'entrez_specialite'|trans }}">
+                        <label for="specialite">{{ 'specialite'|trans }} <span class="text-danger">*</span></label>
+                        <input type="text" id="specialite" name="specialite" placeholder="{{ 'entrez_specialite'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.specialite|default('') : '' }}" required>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
-                        <label for="intitule_these">{{ 'intitule_these'|trans }}</label>
-                        <input type="text" id="intitule_these" name="intitule_these" placeholder="{{ 'entrez_intitule_these'|trans }}">
+                        <label for="intitule_these">{{ 'intitule_these'|trans }} <span class="text-danger">*</span></label>
+                        <input type="text" id="intitule_these" name="intitule_these" placeholder="{{ 'entrez_intitule_these'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.intituleThese|default('') : '' }}" required>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="introduction">{{ 'introduction'|trans }}</label>
-                        <textarea id="introduction" name="introduction" placeholder="{{ 'entrez_introduction'|trans }}"></textarea>
+                        <label for="introduction">{{ 'introduction'|trans }} <span class="text-danger">*</span></label>
+                        <textarea id="introduction" name="introduction" placeholder="{{ 'entrez_introduction'|trans }}" required>{{ latest_reinscription is not null ? latest_reinscription.introduction|default('') : '' }}</textarea>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="problematique">{{ 'problematique'|trans }}</label>
-                        <textarea id="problematique" name="problematique" placeholder="{{ 'entrez_problematique'|trans }}"></textarea>
+                        <label for="problematique">{{ 'problematique'|trans }} <span class="text-danger">*</span></label>
+                        <textarea id="problematique" name="problematique" placeholder="{{ 'entrez_problematique'|trans }}" required>{{ latest_reinscription is not null ? latest_reinscription.problematique|default('') : '' }}</textarea>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="methodologie">{{ 'methodologie_utilisee'|trans }}</label>
-                        <textarea id="methodologie" name="methodologie" placeholder="{{ 'entrez_methodologie'|trans }}"></textarea>
+                        <label for="methodologie">{{ 'methodologie_utilisee'|trans }} <span class="text-danger">*</span></label>
+                        <textarea id="methodologie" name="methodologie" placeholder="{{ 'entrez_methodologie'|trans }}" required>{{ latest_reinscription is not null ? latest_reinscription.methodologie|default('') : '' }}</textarea>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="resultats">{{ 'resultats_obtenus_interpretation'|trans }}</label>
-                        <textarea id="resultats" name="resultats" placeholder="{{ 'entrez_resultats'|trans }}"></textarea>
+                        <label for="resultats">{{ 'resultats_obtenus_interpretation'|trans }} <span class="text-danger">*</span></label>
+                        <textarea id="resultats" name="resultats" placeholder="{{ 'entrez_resultats'|trans }}" required>{{ latest_reinscription is not null ? latest_reinscription.resultats|default('') : '' }}</textarea>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="conclusion">{{ 'conclusion'|trans }}</label>
-                        <textarea id="conclusion" name="conclusion" placeholder="{{ 'entrez_conclusion'|trans }}"></textarea>
+                        <label for="conclusion">{{ 'conclusion'|trans }} <span class="text-danger">*</span></label>
+                        <textarea id="conclusion" name="conclusion" placeholder="{{ 'entrez_conclusion'|trans }}" required>{{ latest_reinscription is not null ? latest_reinscription.conclusion|default('') : '' }}</textarea>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="travaux_en_attente">{{ 'travaux_en_attente'|trans }}</label>
-                        <textarea id="travaux_en_attente" name="travaux_en_attente" placeholder="{{ 'entrez_travaux_en_attente'|trans }}"></textarea>
+                        <label for="travaux_en_attente">{{ 'travaux_en_attente'|trans }} <span class="text-danger">*</span></label>
+                        <textarea id="travaux_en_attente" name="travaux_en_attente" placeholder="{{ 'entrez_travaux_en_attente'|trans }}" required>{{ latest_reinscription is not null ? latest_reinscription.travauxEnAttente|default('') : '' }}</textarea>
                     </div>
                 </div>
 
@@ -334,14 +333,14 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <label>
-                                <input type="checkbox" name="bourse_merite" id="bourse_merite">
+                                <input type="checkbox" name="bourse_merite" id="bourse_merite" {{ latest_reinscription is not null and latest_reinscription.bourseMerite ? 'checked' : '' }}>
                                 <span class="checkmark"></span>
                                 {{ 'bourse_merite'|trans }}
                             </label>
                         </div>
-                        <div class="conditional-field" id="bourse_merite_depuis_field">
+                        <div class="conditional-field" id="bourse_merite_depuis_field" style="{{ latest_reinscription is not null and latest_reinscription.bourseMerite ? 'display: block;' : 'display: none;' }}">
                             <label for="bourse_merite_depuis">{{ 'depuis'|trans }}</label>
-                            <input type="date" id="bourse_merite_depuis" name="bourse_merite_depuis">
+                            <input type="date" id="bourse_merite_depuis" name="bourse_merite_depuis" value="{{ latest_reinscription is not null and latest_reinscription.bourseMeriteDepuis ? latest_reinscription.bourseMeriteDepuis|date('Y-m-d') : '' }}">
                         </div>
                     </div>
                 </div>
@@ -349,14 +348,14 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <label>
-                                <input type="checkbox" name="bourse_troisieme_cycle" id="bourse_troisieme_cycle">
+                                <input type="checkbox" name="bourse_troisieme_cycle" id="bourse_troisieme_cycle" {{ latest_reinscription is not null and latest_reinscription.bourseTroisiemeCycle ? 'checked' : '' }}>
                                 <span class="checkmark"></span>
                                 {{ 'bourse_troisieme_cycle'|trans }}
                             </label>
                         </div>
-                        <div class="conditional-field" id="bourse_troisieme_cycle_depuis_field">
+                        <div class="conditional-field" id="bourse_troisieme_cycle_depuis_field" style="{{ latest_reinscription is not null and latest_reinscription.bourseTroisiemeCycle ? 'display: block;' : 'display: none;' }}">
                             <label for="bourse_troisieme_cycle_depuis">{{ 'depuis'|trans }}</label>
-                            <input type="date" id="bourse_troisieme_cycle_depuis" name="bourse_troisieme_cycle_depuis">
+                            <input type="date" id="bourse_troisieme_cycle_depuis" name="bourse_troisieme_cycle_depuis" value="{{ latest_reinscription is not null and latest_reinscription.bourseTroisiemeCycleDepuis ? latest_reinscription.bourseTroisiemeCycleDepuis|date('Y-m-d') : '' }}">
                         </div>
                     </div>
                 </div>
@@ -364,80 +363,80 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <label>
-                                <input type="checkbox" name="bourse_cotutelle" id="bourse_cotutelle">
+                                <input type="checkbox" name="bourse_cotutelle" id="bourse_cotutelle" {{ latest_reinscription is not null and latest_reinscription.bourseCotutelle ? 'checked' : '' }}>
                                 <span class="checkmark"></span>
                                 {{ 'bourse_cotutelle'|trans }}
                             </label>
                         </div>
-                        <div class="conditional-field" id="bourse_cotutelle_dates_field">
+                        <div class="conditional-field" id="bourse_cotutelle_dates_field" style="{{ latest_reinscription is not null and latest_reinscription.bourseCotutelle ? 'display: block;' : 'display: none;' }}">
                             <label for="bourse_cotutelle_date_debut">{{ 'date_debut'|trans }}</label>
-                            <input type="date" id="bourse_cotutelle_date_debut" name="bourse_cotutelle_date_debut">
+                            <input type="date" id="bourse_cotutelle_date_debut" name="bourse_cotutelle_date_debut" value="{{ latest_reinscription is not null and latest_reinscription.bourseCotutelleDateDebut ? latest_reinscription.bourseCotutelleDateDebut|date('Y-m-d') : '' }}">
                             <label for="bourse_cotutelle_date_fin">{{ 'date_fin'|trans }}</label>
-                            <input type="date" id="bourse_cotutelle_date_fin" name="bourse_cotutelle_date_fin">
+                            <input type="date" id="bourse_cotutelle_date_fin" name="bourse_cotutelle_date_fin" value="{{ latest_reinscription is not null and latest_reinscription.bourseCotutelleDateFin ? latest_reinscription.bourseCotutelleDateFin|date('Y-m-d') : '' }}">
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="bourse_echange">{{ 'bourse_echange'|trans }}</label>
-                        <input type="text" id="bourse_echange" name="bourse_echange" placeholder="{{ 'precisez_bourse_echange'|trans }}">
+                        <input type="text" id="bourse_echange" name="bourse_echange" placeholder="{{ 'precisez_bourse_echange'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.bourseEchange|default('') : '' }}">
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="bourse_projet_recherche">{{ 'bourse_projet_recherche'|trans }}</label>
-                        <input type="text" id="bourse_projet_recherche" name="bourse_projet_recherche" placeholder="{{ 'precisez_projet_recherche'|trans }}">
+                        <input type="text" id="bourse_projet_recherche" name="bourse_projet_recherche" placeholder="{{ 'precisez_projet_recherche'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.bourseProjetRecherche|default('') : '' }}">
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="salarie_fonction">{{ 'salarie_fonction'|trans }}</label>
-                        <input type="text" id="salarie_fonction" name="salarie_fonction" placeholder="{{ 'entrez_fonction'|trans }}">
+                        <input type="text" id="salarie_fonction" name="salarie_fonction" placeholder="{{ 'entrez_fonction'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.salarieFonction|default('') : '' }}">
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="salarie_organisme">{{ 'salarie_organisme_employeur'|trans }}</label>
-                        <input type="text" id="salarie_organisme" name="salarie_organisme" placeholder="{{ 'entrez_organisme_employeur'|trans }}">
+                        <input type="text" id="salarie_organisme" name="salarie_organisme" placeholder="{{ 'entrez_organisme_employeur'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.salarieOrganisme|default('') : '' }}">
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="fonctionnaire_fonction">{{ 'fonctionnaire_fonction'|trans }}</label>
-                        <input type="text" id="fonctionnaire_fonction" name="fonctionnaire_fonction" placeholder="{{ 'entrez_fonction'|trans }}">
+                        <input type="text" id="fonctionnaire_fonction" name="fonctionnaire_fonction" placeholder="{{ 'entrez_fonction'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.fonctionnaireFonction|default('') : '' }}">
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="fonctionnaire_organisme">{{ 'fonctionnaire_organisme_employeur'|trans }}</label>
-                        <input type="text" id="fonctionnaire_organisme" name="fonctionnaire_organisme" placeholder="{{ 'entrez_organisme_employeur'|trans }}">
+                        <input type="text" id="fonctionnaire_organisme" name="fonctionnaire_organisme" placeholder="{{ 'entrez_organisme_employeur'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.fonctionnaireOrganisme|default('') : '' }}">
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <div class="checkbox-group">
                             <label>
-                                <input type="checkbox" name="cotutelle" id="cotutelle">
+                                <input type="checkbox" name="cotutelle" id="cotutelle" {{ latest_reinscription is not null and latest_reinscription.cotutelle ? 'checked' : '' }}>
                                 <span class="checkmark"></span>
                                 {{ 'cotutelle_oui'|trans }}
                             </label>
                         </div>
-                        <div class="conditional-field" id="cotutelle_fields">
+                        <div class="conditional-field" id="cotutelle_fields" style="{{ latest_reinscription is not null and latest_reinscription.cotutelle ? 'display: block;' : 'display: none;' }}">
                             <div class="form-group">
                                 <label for="cotutelle_universite">{{ 'universite_organisme_recherche'|trans }}</label>
-                                <input type="text" id="cotutelle_universite" name="cotutelle_universite" placeholder="{{ 'entrez_universite_organisme'|trans }}">
+                                <input type="text" id="cotutelle_universite" name="cotutelle_universite" placeholder="{{ 'entrez_universite_organisme'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.cotutelleUniversite|default('') : '' }}">
                             </div>
                             <div class="form-group">
                                 <label for="cotutelle_nom_prenom">{{ 'nom_prenom_co_directeur'|trans }}</label>
-                                <input type="text" id="cotutelle_nom_prenom" name="cotutelle_nom_prenom" placeholder="{{ 'entrez_nom_prenom'|trans }}">
+                                <input type="text" id="cotutelle_nom_prenom" name="cotutelle_nom_prenom" placeholder="{{ 'entrez_nom_prenom'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.cotutelleNomPrenom|default('') : '' }}">
                             </div>
                             <div class="form-group">
                                 <label for="cotutelle_telephone">{{ 'telephone'|trans }}</label>
-                                <input type="text" id="cotutelle_telephone" name="cotutelle_telephone" placeholder="{{ 'entrez_telephone'|trans }}">
+                                <input type="text" id="cotutelle_telephone" name="cotutelle_telephone" placeholder="{{ 'entrez_telephone'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.cotutelleTelephone|default('') : '' }}">
                             </div>
                             <div class="form-group">
                                 <label for="cotutelle_email">{{ 'email'|trans }}</label>
-                                <input type="email" id="cotutelle_email" name="cotutelle_email" placeholder="{{ 'entrez_email'|trans }}">
+                                <input type="email" id="cotutelle_email" name="cotutelle_email" placeholder="{{ 'entrez_email'|trans }}" value="{{ latest_reinscription is not null ? latest_reinscription.cotutelleEmail|default('') : '' }}">
                             </div>
                         </div>
                     </div>
@@ -449,14 +448,27 @@
                 </div>
                 <div class="col-12">
                     <div id="formations_complementaires">
-                        <div class="formation-row">
-                            <input type="date" name="formations[0][date]" placeholder="Date">
-                            <input type="text" name="formations[0][duree]" placeholder="Durée (heures)">
-                            <input type="text" name="formations[0][intitule]" placeholder="Intitulé">
-                            <input type="text" name="formations[0][organisateur]" placeholder="Organisateur">
-                            <input type="text" name="formations[0][equivalence_heures]" placeholder="Equivalence en heures">
-                            <button type="button" class="btn-remove" onclick="removeFormationRow(this)">{{ 'Supprimer' }}</button>
-                        </div>
+                        {% if latest_reinscription is not null and latest_reinscription.formationsComplementaires is defined and latest_reinscription.formationsComplementaires|length > 0 %}
+                            {% for index, formation in latest_reinscription.formationsComplementaires %}
+                                <div class="formation-row">
+                                    <input type="date" name="formations[{{ index }}][date]" placeholder="Date" value="{{ formation.date ? formation.date|date('Y-m-d') : '' }}">
+                                    <input type="text" name="formations[{{ index }}][duree]" placeholder="Durée (heures)" value="{{ formation.duree|default('') }}">
+                                    <input type="text" name="formations[{{ index }}][intitule]" placeholder="Intitulé" value="{{ formation.intitule|default('') }}">
+                                    <input type="text" name="formations[{{ index }}][organisateur]" placeholder="Organisateur" value="{{ formation.organisateur|default('') }}">
+                                    <input type="text" name="formations[{{ index }}][equivalence_heures]" placeholder="Equivalence en heures" value="{{ formation.equivalenceHeures|default('') }}">
+                                    <button type="button" class="btn-remove" onclick="removeFormationRow(this)">{{ 'Supprimer' }}</button>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="formation-row">
+                                <input type="date" name="formations[0][date]" placeholder="Date">
+                                <input type="text" name="formations[0][duree]" placeholder="Durée (heures)">
+                                <input type="text" name="formations[0][intitule]" placeholder="Intitulé">
+                                <input type="text" name="formations[0][organisateur]" placeholder="Organisateur">
+                                <input type="text" name="formations[0][equivalence_heures]" placeholder="Equivalence en heures">
+                                <button type="button" class="btn-remove" onclick="removeFormationRow(this)">{{ 'Supprimer' }}</button>
+                            </div>
+                        {% endif %}
                     </div>
                     <button type="button" class="btn-add mt-2" onclick="addFormationRow()">{{ 'ajouter_formation'|trans }}</button>
                 </div>
@@ -469,4 +481,40 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('reinscription_fd') }}
+    <script>
+        // Show/hide conditional fields based on checkbox state
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const conditionalField = document.getElementById(this.id + '_field') || document.getElementById(this.id + '_dates_field') || document.getElementById(this.id + '_fields');
+                if (conditionalField) {
+                    conditionalField.style.display = this.checked ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Function to add a new formation row
+        function addFormationRow() {
+            const container = document.getElementById('formations_complementaires');
+            const index = container.querySelectorAll('.formation-row').length;
+            const newRow = document.createElement('div');
+            newRow.className = 'formation-row';
+            newRow.innerHTML = `
+                <input type="date" name="formations[${index}][date]" placeholder="Date">
+                <input type="text" name="formations[${index}][duree]" placeholder="Durée (heures)">
+                <input type="text" name="formations[${index}][intitule]" placeholder="Intitulé">
+                <input type="text" name="formations[${index}][organisateur]" placeholder="Organisateur">
+                <input type="text" name="formations[${index}][equivalence_heures]" placeholder="Equivalence en heures">
+                <button type="button" class="btn-remove" onclick="removeFormationRow(this)">{{ 'Supprimer' }}</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        // Function to remove a formation row
+        function removeFormationRow(button) {
+            const container = document.getElementById('formations_complementaires');
+            if (container.querySelectorAll('.formation-row').length > 1) {
+                button.parentElement.remove();
+            }
+        }
+    </script>
 {% endblock %}

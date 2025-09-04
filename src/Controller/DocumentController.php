@@ -26,11 +26,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\Cvtheque;
 use App\Repository\CvthequeRepository;
+use Psr\Log\LoggerInterface;
 
 class DocumentController extends AbstractController
 {
     #[Route(path: '/document', name: 'app_document')]
-    public function document(Security $security, Request $request, Connection $conn)
+    public function document(Security $security, Request $request, Connection $conn, LoggerInterface $logger)
     {
         $usr = $security->getUser();
         $em = $this->getDoctrine()->getManager('default');
@@ -39,11 +40,18 @@ class DocumentController extends AbstractController
 
         $etudiant = $em->getRepository(Etudiants::class)->etudiantByInd($usr->getCode(), $conn);
 
-        $ins_Adm_E = $em->getRepository(Etudiants::class)->insAdmValidInd($etudiant["COD_IND"], $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
+        // Check if $etudiant is valid
+        if (empty($etudiant) || !is_array($etudiant)) {
+            $logger->error('No student record found for user code: ' . $usr->getCode());
+            $this->addFlash('danger', 'msg_doc_student_not_found');
+            return new RedirectResponse($this->generateUrl('app_dashboard'));
+        }
 
-        $ins_Adm_AT = $em->getRepository(Etudiants::class)->insAdmValidInd($etudiant["COD_IND"], $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
+        $ins_Adm_E = $em->getRepository(Etudiants::class)->insAdmValidInd($etudiant["COD_IND"] ?? null, $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
 
-        $ins_dip = $em->getRepository(Etudiants::class)->insAdmDiplomeInd($etudiant["COD_IND"], $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
+        $ins_Adm_AT = $em->getRepository(Etudiants::class)->insAdmValidInd($etudiant["COD_IND"] ?? null, $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
+
+        $ins_dip = $em->getRepository(Etudiants::class)->insAdmDiplomeInd($etudiant["COD_IND"] ?? null, $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
 
         $releveValide = $em->getRepository(EtuReleveAttestation::class)->docBycodeNonRefu($usr->getId(), 'Relevé');
         $tab = array();
@@ -83,49 +91,51 @@ class DocumentController extends AbstractController
         // Check CVthèque completion
         $hasCv = $em->getRepository(Cvtheque::class)->cvExist($usr->getId()) === "True";
 
-        // Check for validated PFE rapport with encadrant_id
-        $hasValidRapport = $conn->fetchOne(
-            'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status AND encadrant_id IS NOT NULL',
-            ['cod_etu' => $etudiant["COD_ETU"], 'status' => 'Validé']
-        ) !== false;
+        // Check for stage record
+        $hasStage = false;
+        if (isset($etudiant['id']) && !empty($etudiant['id'])) {
+            $hasStage = $conn->fetchOne(
+                'SELECT 1 FROM stage WHERE user_id = :user_id AND typeStage_id = 1 AND statut = :statut',
+                ['user_id' => $etudiant['id'], 'statut' => '1']
+            ) !== false;
+        } else {
+            $logger->warning('Student ID not found for user code: ' . $usr->getCode() . '. Assuming no stage record.');
+        }
 
-        // Combine conditions
-        $hasValidRapportAndCv = $hasCv && $hasValidRapport;
+        // Check for validated PFE rapport with encadrant_id (only if stage exists)
+        $hasValidRapport = false;
+        if ($hasStage && isset($etudiant['COD_ETU'])) {
+            $hasValidRapport = $conn->fetchOne(
+                'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status AND encadrant_id IS NOT NULL',
+                ['cod_etu' => $etudiant['COD_ETU'], 'status' => 'Validé']
+            ) !== false;
+        }
+
+        // Determine if diploma request is allowed
+        $hasValidRapportAndCv = $hasCv && (!$hasStage || $hasValidRapport);
 
         $ins_Adm_E = array_change_key_case($ins_Adm_E, CASE_UPPER);
         $ins_Adm_AT = array_change_key_case($ins_Adm_AT, CASE_UPPER);
 
-        if ($usr->getType() == 'FI') {
-            return $this->render('documents/demande.html.twig', [
-                'form' => $form->createView(),
-                'ins_dip' => $ins_dip,
-                'ins_etape' => $ins_Adm_E,
-                'etudiant' => $etudiant,
-                'ins_etape_AT' => $ins_Adm_AT,
-                'releves' => $releves,
-                'diplomes' => $diplomes,
-                'cartes' => $cartes,
-                'attestations' => $attestations,
-                'hasValidRapportAndCv' => $hasValidRapportAndCv
-            ]);
-        } else {
-            return $this->render('documents/demande.html.twig', [
-                'form' => $form->createView(),
-                'ins_dip' => $ins_dip,
-                'ins_etape' => $ins_Adm_E,
-                'etudiant' => $etudiant,
-                'ins_etape_AT' => $ins_Adm_AT,
-                'releves' => $releves,
-                'diplomes' => $diplomes,
-                'cartes' => $cartes,
-                'attestations' => $attestations,
-                'hasValidRapportAndCv' => $hasValidRapportAndCv
-            ]);
-        }
+        return $this->render('documents/demande.html.twig', [
+            'form' => $form->createView(),
+            'ins_dip' => $ins_dip,
+            'ins_etape' => $ins_Adm_E,
+            'etudiant' => $etudiant,
+            'ins_etape_AT' => $ins_Adm_AT,
+            'releves' => $releves,
+            'diplomes' => $diplomes,
+            'cartes' => $cartes,
+            'attestations' => $attestations,
+            'hasValidRapportAndCv' => $hasValidRapportAndCv,
+            'hasCv' => $hasCv,
+            'hasStage' => $hasStage,
+            'hasValidRapport' => $hasValidRapport
+        ]);
     }
 
     #[Route(path: '/demandeDoc', name: 'app_demandeDoc')]
-    public function demandeDocAction(Security $security, Request $request, Connection $conn, TranslatorInterface $translator)
+    public function demandeDocAction(Security $security, Request $request, Connection $conn, TranslatorInterface $translator, LoggerInterface $logger)
     {
         $usr = $security->getUser();
         $em = $this->getDoctrine()->getManager('default');
@@ -139,12 +149,19 @@ class DocumentController extends AbstractController
         $anneeUniversitaire = $em->getRepository(Etudiants::class)->getAnneeUnivEncours($conn);
         $etudiant = $em->getRepository(Etudiants::class)->etudiantByInd($usr->getCode(), $conn);
 
+        // Check if $etudiant is valid
+        if (empty($etudiant) || !is_array($etudiant)) {
+            $logger->error('No student record found for user code: ' . $usr->getCode() . ' in demandeDocAction');
+            $this->addFlash('danger', 'msg_doc_student_not_found');
+            return new RedirectResponse($this->generateUrl('app_document'));
+        }
+
         $releves = $request->get('releve');
         $attestationR = $request->get('attestationR');
         $document = $request->get('document');
 
-        $ins_Adm_E = $em->getRepository(Etudiants::class)->insAdmValidInd($etudiant["COD_IND"], $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
-        $ins_dip = $em->getRepository(Etudiants::class)->insAdmDiplomeInd($etudiant["COD_IND"], $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
+        $ins_Adm_E = $em->getRepository(Etudiants::class)->insAdmValidInd($etudiant["COD_IND"] ?? null, $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
+        $ins_dip = $em->getRepository(Etudiants::class)->insAdmDiplomeInd($etudiant["COD_IND"] ?? null, $conn, $param->app_config('ETA_IAE'), $param->app_config('COD_CMP'), $param->app_config('COD_ADM'));
 
         // traitement des relevés de notes
         if (!empty($releves)) {
@@ -153,7 +170,6 @@ class DocumentController extends AbstractController
                 $releveAttestation->setDateDemande(new \DateTime('now'));
                 $releveAttestation->setCodeEtudiant($usr);
                 $releveAttestation->setAnneeUniv($anneeUniversitaire['COD_ANU']);
-                $releveAttestation->setCodeEtudiant($usr);
                 $releve = explode("_", $key);
                 $codeEtape = $releve[0];
                 $anneEtape = $releve[1];
@@ -194,7 +210,6 @@ class DocumentController extends AbstractController
                 $releveAttestation1->setDateDemande(new \DateTime('now'));
                 $releveAttestation1->setCodeEtudiant($usr);
                 $releveAttestation1->setAnneeUniv($anneeUniversitaire['COD_ANU']);
-                $releveAttestation1->setCodeEtudiant($usr);
                 $attestation = explode("_", $key1);
                 $codeEtape = $attestation[0];
                 $anneEtape = $attestation[1];
@@ -266,15 +281,28 @@ class DocumentController extends AbstractController
             }
         }
         if (isset($document['diplome'])) {
-            // Check CVthèque and validated PFE rapport before allowing diploma request
+            // Check CVthèque and stage/rapport requirements
             $hasCv = $em->getRepository(Cvtheque::class)->cvExist($usr->getId()) === "True";
-            $hasValidRapport = $conn->fetchOne(
-                'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status AND encadrant_id IS NOT NULL',
-                ['cod_etu' => $etudiant["COD_ETU"], 'status' => 'Validé']
-            ) !== false;
+            $hasStage = false;
+            if (isset($etudiant['id']) && !empty($etudiant['id'])) {
+                $hasStage = $conn->fetchOne(
+                    'SELECT 1 FROM stage WHERE user_id = :user_id AND typeStage_id = 1 AND statut = :statut',
+                    ['user_id' => $etudiant['id'], 'statut' => '1']
+                ) !== false;
+            } else {
+                $logger->warning('Student ID not found for user code: ' . $usr->getCode() . ' in demandeDocAction. Assuming no stage record.');
+            }
 
-            if (!$hasCv || !$hasValidRapport) {
-                $this->addFlash('danger', "msg_doc_cvtheque_or_rapport");
+            $hasValidRapport = false;
+            if ($hasStage && isset($etudiant['COD_ETU'])) {
+                $hasValidRapport = $conn->fetchOne(
+                    'SELECT 1 FROM pgi_doc_db.rapport_pfe WHERE etudiant_code = :cod_etu AND status = :status AND encadrant_id IS NOT NULL',
+                    ['cod_etu' => $etudiant['COD_ETU'], 'status' => 'Validé']
+                ) !== false;
+            }
+
+            if (!$hasCv || ($hasStage && !$hasValidRapport)) {
+                $this->addFlash('danger', $hasStage ? "msg_doc_cvtheque_or_rapport" : "msg_doc_cvtheque");
             } else {
                 if (!empty($ins_dip)) {
                     $diplomeCarte1 = new EtuDiplomeCarte();

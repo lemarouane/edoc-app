@@ -113,7 +113,11 @@
                                                     <div class="col-sm-12 col-md-6">
                                                         <label for="diplome" class="control-label">{{ 'diplome'|trans }}</label>
                                                         <div class="alert-missing-requirements">
-                                                            {{ 'Vous devez compléter votre CVthèque et soumettre un rapport PFE validé avec un encadrant assigné pour demander un diplôme.'|trans }}
+                                                            {% if hasStage %}
+                                                                {{ 'Vous devez compléter votre CVthèque et soumettre un rapport PFE validé avec un encadrant assigné pour demander un diplôme.'|trans }}
+                                                            {% else %}
+                                                                {{ 'Vous devez compléter votre CVthèque pour demander un diplôme.'|trans }}
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 {% endif %}

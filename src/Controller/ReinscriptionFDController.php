@@ -99,6 +99,13 @@ class ReinscriptionFDController extends AbstractController
             }
         }
 
+        // Fetch all ReinscriptionDetails for the doctorant for pre-filling and status display
+        $reinscriptions = $defaultEm->getRepository(ReinscriptionDetails::class)->findBy(
+            ['doctorantId' => $doctorant['id']],
+            ['id' => 'DESC']
+        );
+        $latestReinscription = !empty($reinscriptions) ? $reinscriptions[0] : null;
+
         // Handle form submission
         $reinscriptionDetails = new ReinscriptionDetails();
         if ($request->isMethod('POST')) {
@@ -443,8 +450,12 @@ EOD;
             );
         }
 
-        // Render the form if not submitted
-        return $this->render('reinscription_fd/form_fd.html.twig');
+        // Render the form with pre-filled data if available
+        return $this->render('reinscription_fd/form_fd.html.twig', [
+            'reinscriptions' => $reinscriptions,
+            'latest_reinscription' => $latestReinscription,
+            'doctorant' => $doctorant,
+        ]);
     }
 
     #[Route('/admin/reinscriptions', name: 'admin_reinscriptions', methods: ['GET'])]
